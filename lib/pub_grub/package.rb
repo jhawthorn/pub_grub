@@ -1,10 +1,15 @@
 module PubGrub
   class Package
     class Version
-      attr_reader :name
+      attr_reader :package, :name
 
-      def initialize(name)
+      def initialize(package, name)
+        @package = package
         @name = name
+      end
+
+      def to_s
+        "#{package.name} #{name}"
       end
     end
 
@@ -16,13 +21,19 @@ module PubGrub
     end
 
     def add_version(name)
-      @versions << Version.new(name)
+      @versions << Version.new(self, name)
     end
 
     class RootPackage < Package
+      class Version < Package::Version
+        def to_s
+          "(root)"
+        end
+      end
+
       def initialize
         super("(root)")
-        add_version('1.0.0')
+        @versions = [Version.new(self, "1.0.0")].freeze
       end
     end
 
