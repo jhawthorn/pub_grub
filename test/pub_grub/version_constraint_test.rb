@@ -33,5 +33,29 @@ module PubGrub
       assert_equal [], constraint.versions
       assert_equal "pkg > 99", constraint.to_s
     end
+
+    def test_intersection
+      a = VersionConstraint.new(@package, "> 1")
+      b = VersionConstraint.new(@package, "< 2")
+
+      constraint = a.intersect(b)
+
+      assert_equal 0b010, constraint.bitmap
+      assert_equal ["> 1", "< 2"], constraint.constraint
+      assert_equal [@package.versions[1]], constraint.versions
+      assert_equal %q{pkg ["> 1", "< 2"]}, constraint.to_s
+    end
+
+    def test_no_intersection
+      a = VersionConstraint.new(@package, "<= 1")
+      b = VersionConstraint.new(@package, ">= 2")
+
+      constraint = a.intersect(b)
+
+      assert_equal 0b000, constraint.bitmap
+      assert_equal ["<= 1", ">= 2"], constraint.constraint
+      assert_equal [], constraint.versions
+      assert_equal %q{pkg ["<= 1", ">= 2"]}, constraint.to_s
+    end
   end
 end

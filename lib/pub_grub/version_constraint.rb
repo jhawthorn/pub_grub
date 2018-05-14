@@ -8,8 +8,8 @@ module PubGrub
     # @param constraint [String]
     def initialize(package, constraint = nil, bitmap: nil)
       @package = package
-      @constraint = constraint || ">= 0"
-      @bitmap = nil # Calculated lazily
+      @constraint = Array(constraint)
+      @bitmap = bitmap # Calculated lazily
     end
 
     def bitmap
@@ -27,6 +27,13 @@ module PubGrub
         end
     end
 
+    def intersect(other)
+      unless package == other.package
+        raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
+      end
+      self.class.new(package, constraint + other.constraint, bitmap: bitmap & other.bitmap)
+    end
+
     def versions
       package.versions.select do |version|
         bitmap[version.id] == 1
@@ -34,7 +41,14 @@ module PubGrub
     end
 
     def to_s
-      "#{package.name} #{constraint}"
+      case constraint.length
+      when 0
+        "#{package.name} >= 0"
+      when 1
+        "#{package.name} #{constraint[0]}"
+      else
+        "#{package.name} #{constraint.inspect}"
+      end
     end
   end
 end
