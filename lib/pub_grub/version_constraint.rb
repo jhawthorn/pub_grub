@@ -41,14 +41,22 @@ module PubGrub
     end
 
     def to_s
+      "#{package.name} #{constraint_string}"
+    end
+
+    def constraint_string
       case constraint.length
       when 0
-        "#{package.name} >= 0"
+        ">= 0"
       when 1
-        "#{package.name} #{constraint[0]}"
+        "#{constraint[0]}"
       else
-        "#{package.name} #{constraint.inspect}"
+        "#{constraint.join(", ")}"
       end
+    end
+
+    def inspect
+      "#<#{self.class} #{self} (#{bitmap.to_s(2).rjust(package.versions.count, "0")})>"
     end
   end
 end
