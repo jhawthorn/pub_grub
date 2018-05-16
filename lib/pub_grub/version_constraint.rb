@@ -34,6 +34,19 @@ module PubGrub
       self.class.new(package, constraint + other.constraint, bitmap: bitmap & other.bitmap)
     end
 
+    def invert
+      new_bitmap = bitmap ^ ((1 << package.versions.length) - 1)
+      new_constraint =
+        if constraint.length == 0
+          ["not >= 0"]
+        elsif constraint.length == 1
+          ["not #{constraint[0]}"]
+        else
+          ["not (#{constraint_string})"]
+        end
+      self.class.new(package, new_constraint, bitmap: new_bitmap)
+    end
+
     def versions
       package.versions.select do |version|
         bitmap[version.id] == 1
