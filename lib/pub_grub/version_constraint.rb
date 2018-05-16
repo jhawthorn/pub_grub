@@ -47,6 +47,10 @@ module PubGrub
       self.class.new(package, new_constraint, bitmap: new_bitmap)
     end
 
+    def difference(other)
+      intersect(other.invert)
+    end
+
     def versions
       package.versions.select do |version|
         bitmap[version.id] == 1

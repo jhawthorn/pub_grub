@@ -87,5 +87,17 @@ module PubGrub
       assert_equal "pkg not (> 1, < 2)", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg not (> 1, < 2) (101)>", constraint.inspect
     end
+
+    def test_difference
+      a = VersionConstraint.new(@package, [">= 1"])
+      b = VersionConstraint.new(@package, ["~> 1"])
+
+      constraint = a.difference(b)
+
+      assert_equal 0b001, constraint.bitmap
+      assert_equal [">= 1", "not ~> 1"], constraint.constraint
+      assert_equal "pkg >= 1, not ~> 1", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg >= 1, not ~> 1 (001)>", constraint.inspect
+    end
   end
 end
