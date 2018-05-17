@@ -3,12 +3,18 @@
 require "bundler/setup"
 require "pub_grub"
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
+bar = PubGrub::Package.new "bar" do |p|
+  p.add_version "2.0.0"
+  p.add_version "1.0.0"
+end
 
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
+foo = PubGrub::Package.new "foo" do |p|
+  p.add_version "2.0.0"
+  p.add_version "1.1.0"
+  p.add_version "1.0.0"
+end
 
-require "irb"
-IRB.start(__FILE__)
+require 'irb'
+IRB.setup(__FILE__)
+workspace = IRB::WorkSpace.new(binding)
+IRB::Irb.new(workspace).run(IRB.conf)
