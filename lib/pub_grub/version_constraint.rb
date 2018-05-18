@@ -57,6 +57,16 @@ module PubGrub
       end
     end
 
+    def relation(other)
+      if other.bitmap.allbits?(bitmap)
+        :subset
+      elsif other.bitmap.anybits?(bitmap)
+        :overlap
+      else
+        :disjoint
+      end
+    end
+
     def to_s
       "#{package.name} #{constraint_string}"
     end
