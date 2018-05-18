@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module PubGrub
   class Term
     attr_reader :constraint
@@ -6,8 +8,7 @@ module PubGrub
       @constraint = constraint
     end
 
-    def package
-      constraint.package
-    end
+    extend Forwardable
+    def_delegators :@constraint, :package, :to_s, :versions
   end
 end
