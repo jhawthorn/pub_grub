@@ -57,10 +57,22 @@ module PubGrub
       end
     end
 
+    def subset?(other)
+      other.bitmap.allbits?(bitmap)
+    end
+
+    def overlap?(other)
+      other.bitmap.anybits?(bitmap)
+    end
+
+    def disjoint?(other)
+      !overlap?(other)
+    end
+
     def relation(other)
-      if other.bitmap.allbits?(bitmap)
+      if subset?(other)
         :subset
-      elsif other.bitmap.anybits?(bitmap)
+      elsif overlap?(other)
         :overlap
       else
         :disjoint

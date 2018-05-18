@@ -100,21 +100,34 @@ module PubGrub
       assert_equal "#<PubGrub::VersionConstraint pkg >= 1, not ~> 1 (001)>", constraint.inspect
     end
 
-    def test_relation
+    def test_relation_subset
       # foo ~> 1.1.0 is a subset of foo ~> 1.0
       a = VersionConstraint.new(@package, ["~> 1.1.0"])
       b = VersionConstraint.new(@package, ["~> 1.0"])
       assert_equal :subset, a.relation(b)
+      assert a.subset?(b)
+      assert a.overlap?(b)
+      refute a.disjoint?(b)
+    end
 
+    def test_relation_overlap
       # foo ~> 1.0 overlaps with foo > 1.0
       a = VersionConstraint.new(@package, ["> 1.0"])
       b = VersionConstraint.new(@package, ["~> 1.0"])
       assert_equal :overlap, a.relation(b)
+      refute a.subset?(b)
+      assert a.overlap?(b)
+      refute a.disjoint?(b)
+    end
 
+    def test_relation_disjoint
       # foo ~> 1.0 is disjoint with foo ~> 2.0
       a = VersionConstraint.new(@package, ["~> 1.0"])
       b = VersionConstraint.new(@package, ["~> 2.0"])
       assert_equal :disjoint, a.relation(b)
+      refute a.subset?(b)
+      refute a.overlap?(b)
+      assert a.disjoint?(b)
     end
   end
 end
