@@ -8,7 +8,7 @@ module PubGrub
       assert_kind_of Package::RootPackage, package
       assert_kind_of Package, package
 
-      assert_equal "(root)", package.name
+      assert_equal :root, package.name
       assert_equal 1, package.versions.length
       assert_equal package, package.versions[0].package
       assert_equal "1.0.0", package.versions[0].name

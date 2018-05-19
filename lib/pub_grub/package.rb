@@ -35,12 +35,12 @@ module PubGrub
     class RootPackage < Package
       class Version < Package::Version
         def to_s
-          package.name
+          "(root)"
         end
       end
 
       def initialize
-        super("(root)")
+        super(:root)
         @versions = [Version.new(self, 0, "1.0.0")].freeze
       end
     end
