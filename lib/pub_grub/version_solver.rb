@@ -1,8 +1,9 @@
+require 'pub_grub/partial_solution'
+
 module PubGrub
   class VersionSolver
-    def initialize(source:, root:)
+    def initialize(source:)
       @source = source
-      @root = root
     end
   end
 end

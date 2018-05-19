@@ -28,6 +28,11 @@ module PubGrub
       yield self if block_given?
     end
 
+    def [](version)
+      @versions.detect { |v| v.name == versions } ||
+        raise("No such version: #{version.inspect}")
+    end
+
     def add_version(name)
       @versions << Version.new(self, @versions.length, name)
     end
