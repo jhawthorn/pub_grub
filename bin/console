@@ -3,16 +3,18 @@
 require "bundler/setup"
 require "pub_grub"
 
-bar = PubGrub::Package.new "bar" do |p|
-  p.add_version "2.0.0"
-  p.add_version "1.0.0"
-end
+source =
+  PubGrub::StaticPackageSource.new do |s|
+    s.add "foo", "2.0.0", deps: { "bar" => "~> 2.0" }
+    s.add "foo", "1.1.0", deps: { "bar" => "~> 1.0" }
+    s.add "foo", "1.0.0", deps: { "bar" => "~> 1.0" }
 
-foo = PubGrub::Package.new "foo" do |p|
-  p.add_version "2.0.0"
-  p.add_version "1.1.0"
-  p.add_version "1.0.0"
-end
+    s.add "bar", "2.0.0"
+    s.add "bar", "1.0.0"
+  end
+
+foo = source.get_package("foo")
+bar = source.get_package("bar")
 
 require 'irb'
 IRB.setup(__FILE__)
