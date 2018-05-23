@@ -5,6 +5,8 @@ module PubGrub
     def test_root
       package = Package.root
 
+      assert_equal package, Package.root, "expected root to be a singleton"
+
       assert_kind_of Package::RootPackage, package
       assert_kind_of Package, package
 

@@ -46,14 +46,21 @@ module PubGrub
         end
       end
 
+      attr_reader :version
+
       def initialize
         super(:root)
-        @versions = [Version.new(self, 0, "1.0.0")].freeze
+        @version = Version.new(self, 0, "1.0.0")
+        @versions = [@version].freeze
       end
     end
 
     def self.root
       @root ||= RootPackage.new
+    end
+
+    def self.root_version
+      root.version
     end
   end
 end
