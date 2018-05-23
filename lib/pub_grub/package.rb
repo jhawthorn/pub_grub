@@ -16,7 +16,7 @@ module PubGrub
       end
 
       def inspect
-        "#<#{self.class} #{package.name}:#{id} #{name}>"
+        "#<#{self.class} #{package.name} #{name} (#{id})>"
       end
     end
 
