@@ -34,7 +34,9 @@ module PubGrub
     end
 
     def add_version(name)
-      @versions << Version.new(self, @versions.length, name)
+      Version.new(self, @versions.length, name).tap do |version|
+        @versions << version
+      end
     end
 
     class RootPackage < Package

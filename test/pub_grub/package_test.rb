@@ -14,5 +14,18 @@ module PubGrub
       assert_equal "1.0.0", package.versions[0].name
       assert_equal "(root)", package.versions[0].to_s
     end
+
+    def test_simple_package
+      package = Package.new("pkg")
+
+      assert_kind_of Package, package
+      assert_equal "pkg", package.name
+
+      version = package.add_version("1.0.0")
+      assert_kind_of Package::Version, version
+      assert_equal package, version.package
+      assert_equal "1.0.0", version.name
+      assert_equal "pkg 1.0.0", version.to_s
+    end
   end
 end
