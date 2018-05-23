@@ -16,6 +16,8 @@ source =
 foo = source.get_package("foo")
 bar = source.get_package("bar")
 
+solver = VersionSolver.new(source: source)
+
 require 'irb'
 IRB.setup(__FILE__)
 workspace = IRB::WorkSpace.new(binding)
