@@ -12,19 +12,22 @@ module PubGrub
       @bitmap = bitmap # Calculated lazily
     end
 
+    def self.bitmap_matching(package)
+      package.versions.select do |version|
+        yield version
+      end.inject(0) do |acc, version|
+        acc | (1 << version.id)
+      end
+    end
+
     def bitmap
       return @bitmap if @bitmap
 
       # TODO: Should not be hardcoded to rubygems semantics
       requirement = Gem::Requirement.new(constraint)
-      @bitmap =
-        package.versions.inject(0) do |acc, version|
-          if requirement.satisfied_by?(Gem::Version.new(version.name))
-            acc | (1 << version.id)
-          else
-            acc
-          end
-        end
+      @bitmap = self.class.bitmap_matching(package) do |version|
+        requirement.satisfied_by?(Gem::Version.new(version.name))
+      end
     end
 
     def intersect(other)
