@@ -12,6 +12,15 @@ module PubGrub
       @bitmap = bitmap # Calculated lazily
     end
 
+    def self.exact(version)
+      package = version.package
+      new(package, version.name, bitmap: bitmap_matching(package) { |v| v == version })
+    end
+
+    def self.any(package)
+      new(package)
+    end
+
     def self.bitmap_matching(package)
       package.versions.select do |version|
         yield version

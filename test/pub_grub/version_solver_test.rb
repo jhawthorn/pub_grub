@@ -15,6 +15,21 @@ module PubGrub
       end
 
       solver = VersionSolver.new(source: source)
+      solver.solve
+    end
+
+    ## First example from pub's solver.md documentation
+    ## https://github.com/dart-lang/pub/blob/master/doc/solver.md#no-conflicts
+    def test_no_conflicts
+      source = StaticPackageSource.new do |s|
+        s.add 'foo', '1.0.0', deps: { 'bar' => '1.0.0' }
+        s.add 'bar', '2.0.0'
+        s.add 'bar', '1.0.0'
+        s.root deps: { 'foo' => '1.0.0' }
+      end
+
+      solver = VersionSolver.new(source: source)
+      solver.solve
     end
   end
 end

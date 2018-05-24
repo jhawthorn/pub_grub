@@ -50,13 +50,19 @@ module PubGrub
           deps = @deps_by_version[requesting_version]
           deps && deps[dep_package_name] && deps[dep_package_name] == dep_constraint_name
         end
-        description = "requiring #{dep_package_name} #{dep_constraint_name}"
+        singular = (bitmap == 1 << version.id)
+        description =
+          if singular
+            version.name
+          else
+            "requiring #{dep_package_name} #{dep_constraint_name}"
+          end
         self_constraint = VersionConstraint.new(package, description, bitmap: bitmap)
 
         dep_package = get_package(dep_package_name)
         dep_constraint = VersionConstraint.new(dep_package, dep_constraint_name)
 
-        Incompatibility.new([self_constraint, dep_constraint])
+        Incompatibility.new([Term.new(self_constraint, true), Term.new(dep_constraint, false)])
       end
     end
   end
