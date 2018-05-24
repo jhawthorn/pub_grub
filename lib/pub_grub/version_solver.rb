@@ -5,5 +5,9 @@ module PubGrub
     def initialize(source:)
       @source = source
     end
+
+    def logger
+      PubGrub.logger
+    end
   end
 end
