@@ -2,6 +2,17 @@ require "test_helper"
 
 module PubGrub
   class VersionSolverTest < Minitest::Test
+    def assert_solution(source, result, expected)
+      expected =
+        expected.map do |package, version|
+          source.version(package, version)
+        end
+      expected -= [Package.root_version]
+      result   -= [Package.root_version]
+
+      assert_equal expected, result
+    end
+
     def test_simple_dependency_tree
       source = StaticPackageSource.new do |s|
         s.add 'a', '1.0.0', deps: { 'aa' => '1.0.0', 'ab' => '1.0.0' }
@@ -17,16 +28,44 @@ module PubGrub
       solver = VersionSolver.new(source: source)
       result = solver.solve
 
-      assert_equal [
-        Package.root_version,
-        source.version('a', '1.0.0'),
-        source.version('b', '1.0.0'),
-        source.version('aa', '1.0.0'),
-        source.version('ab', '1.0.0'),
-        source.version('ba', '1.0.0'),
-        source.version('bb', '1.0.0')
-      ], result
+      assert_solution source, result, {
+        'a'  => '1.0.0',
+        'b'  => '1.0.0',
+        'aa' => '1.0.0',
+        'ab' => '1.0.0',
+        'ba' => '1.0.0',
+        'bb' => '1.0.0'
+      }
     end
+
+    def test_shared_dependency_with_overlapping_constraints
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'a' => '1.0.0', 'b' => '1.0.0' }
+
+        s.add 'a', '1.0.0', deps: { 'shared' => [ '>= 2.0.0', '<4.0.0' ] }
+        s.add 'b', '1.0.0', deps: { 'shared' => [ '>= 3.0.0', '<5.0.0' ] }
+        s.add 'shared', '5.0.0'
+        s.add 'shared', '4.0.0'
+        s.add 'shared', '3.6.9'
+        s.add 'shared', '3.0.0'
+        s.add 'shared', '2.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'a' => '1.0.0',
+        'b' => '1.0.0',
+        'shared' => '3.6.9',
+      }
+    end
+
+
+    ############################################################################
+    ## Examples from Pub's solver.md documentation                            ##
+    ## https://github.com/dart-lang/pub/blob/master/doc/solver.md             ##
+    ############################################################################
 
     ## First example from pub's solver.md documentation
     ## https://github.com/dart-lang/pub/blob/master/doc/solver.md#no-conflicts
@@ -41,11 +80,10 @@ module PubGrub
       solver = VersionSolver.new(source: source)
       result = solver.solve
 
-      assert_equal [
-        Package.root_version,
-        source.version('foo', '1.0.0'),
-        source.version('bar', '1.0.0')
-      ], result
+      assert_solution source, result, {
+        'foo' => '1.0.0',
+        'bar' => '1.0.0'
+      }
     end
 
     ## Third example from pub's solver.md documentation
@@ -61,10 +99,9 @@ module PubGrub
       solver = VersionSolver.new(source: source)
       result = solver.solve
 
-      assert_equal [
-        Package.root_version,
-        source.version('foo', '1.0.0')
-      ], result
+      assert_solution source, result, {
+        'foo' => '1.0.0'
+      }
     end
   end
 end
