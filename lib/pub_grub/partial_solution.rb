@@ -11,7 +11,10 @@ module PubGrub
       @decisions = {}
 
       # { Package => Term }
-      @positive = {}
+      @terms = {}
+
+      # { Package => false }
+      @required = {}
     end
 
     def decision_level
@@ -20,9 +23,9 @@ module PubGrub
 
     def relation(term)
       package = term.package
-      return :overlap if !@positive.key?(package)
+      return :overlap if !@terms.key?(package)
 
-      @positive[package].relation(term)
+      @terms[package].relation(term)
     end
 
     def satisfies?(term)
@@ -58,7 +61,7 @@ module PubGrub
 
     # A list of unsatisfied terms
     def unsatisfied
-      @positive.values.reject do |term|
+      @terms.values.reject do |term|
         @decisions.key?(term.package)
       end
     end
@@ -76,7 +79,8 @@ module PubGrub
 
       @decisions = Hash[decisions.first(previous_level)]
       @assignments = []
-      @positive = {}
+      @terms = {}
+      @required = {}
 
       new_assignments.each do |assignment|
         add_assignment(assignment)
@@ -89,15 +93,15 @@ module PubGrub
       @assignments << assignment
 
       term = assignment.term
-      raise "not implemented yet" unless term.positive
-
       package = term.package
 
-      if @positive.key?(package)
-        old_term = @positive[package]
-        @positive[package] = old_term.intersect(term)
+      @required[package] ||= term.positive?
+
+      if @terms.key?(package)
+        old_term = @terms[package]
+        @terms[package] = old_term.intersect(term)
       else
-        @positive[term.package] = term
+        @terms[term.package] = term
       end
     end
   end
