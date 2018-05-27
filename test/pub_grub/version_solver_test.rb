@@ -15,7 +15,17 @@ module PubGrub
       end
 
       solver = VersionSolver.new(source: source)
-      solver.solve
+      result = solver.solve
+
+      assert_equal [
+        Package.root_version,
+        source.version('a', '1.0.0'),
+        source.version('b', '1.0.0'),
+        source.version('aa', '1.0.0'),
+        source.version('ab', '1.0.0'),
+        source.version('ba', '1.0.0'),
+        source.version('bb', '1.0.0')
+      ], result
     end
 
     ## First example from pub's solver.md documentation
@@ -29,7 +39,13 @@ module PubGrub
       end
 
       solver = VersionSolver.new(source: source)
-      solver.solve
+      result = solver.solve
+
+      assert_equal [
+        Package.root_version,
+        source.version('foo', '1.0.0'),
+        source.version('bar', '1.0.0')
+      ], result
     end
 
     ## Third example from pub's solver.md documentation
@@ -43,7 +59,12 @@ module PubGrub
       end
 
       solver = VersionSolver.new(source: source)
-      solver.solve
+      result = solver.solve
+
+      assert_equal [
+        Package.root_version,
+        source.version('foo', '1.0.0')
+      ], result
     end
   end
 end

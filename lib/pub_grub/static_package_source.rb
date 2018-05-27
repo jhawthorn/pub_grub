@@ -42,6 +42,11 @@ module PubGrub
       @packages[name] ||
         raise("No such package in source: #{name.inspect}")
     end
+    alias_method :package, :get_package
+
+    def version(package_name, version_name)
+      package(package_name).version(version_name)
+    end
 
     def incompatibilities_for(version)
       package = version.package
