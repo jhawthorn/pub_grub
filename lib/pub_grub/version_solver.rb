@@ -41,9 +41,9 @@ module PubGrub
         @incompatibilities[package].each do |incompatibility|
           result = propagate_incompatibility(incompatibility)
           if result == :conflict
-            logger.info "conflict discovered with #{incompatibility}"
-            # TODO
-            raise "oh no a conflict!"
+            root_cause = resolve_conflict(incompatibility)
+            changed.clear
+            changed << propagate_incompatibility(root_cause)
           elsif result # should be a Package
             changed << result
           end
@@ -103,6 +103,77 @@ module PubGrub
       end
 
       version.package
+    end
+
+    def resolve_conflict(incompatibility)
+      logger.info "conflict: #{incompatibility}"
+
+      new_incompatibility = false
+
+      while !incompatibility.failure?
+        current_term = nil
+        current_satisfier = nil
+        current_index = nil
+
+        previous_level = 1
+
+        p incompatibility
+        p incompatibility.terms.map(&:constraint)
+        pp solution.decisions
+
+        incompatibility.terms.each do |term|
+          satisfier, index = solution.satisfier(term)
+
+          if current_satisfier.nil?
+            current_term = term
+            current_satisfier = satisfier
+            current_index = index
+          elsif current_index < index
+            previous_level = [previous_level, current_satisfier.decision_level].max
+            current_satisfier = satisfier
+            current_term = term
+            current_index = index
+          else
+            previous_level = [previous_level, current_satisfier.decision_level].max
+          end
+
+          if current_term == term
+            difference = current_satisfier.term.difference(current_term)
+            if !difference.empty?
+              p difference
+              raise "TODO"
+            end
+          end
+        end
+
+        if previous_level < current_satisfier.decision_level ||
+            current_satisfier.cause.nil?
+
+          solution.backtrack(previous_level)
+
+          if new_incompatibility
+            add_incompatibility(incompatibility)
+          end
+
+          return incompatibility
+        end
+
+        new_terms = []
+        new_terms += incompatibility.terms - [current_term]
+        new_terms += current_satisfier.cause.terms.reject { |term|
+          term.package == current_satisfier.term.package
+        }
+
+        incompatibility = Incompatibility.new(new_terms)
+
+        new_incompatibility = true
+
+        logger.info "! #{current_term} is satisfied by #{current_satisfier.term}"
+        logger.info "! which is caused by #{current_satisfier.cause}"
+        logger.info "! thus #{incompatibility}"
+      end
+
+      raise "Solving failed!"
     end
 
     def add_incompatibility(incompatibility)

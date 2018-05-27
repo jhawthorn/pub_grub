@@ -1,15 +1,15 @@
 module PubGrub
   class Assignment
-    attr_reader :term, :cause, :level
-    def initialize(term, cause, level)
+    attr_reader :term, :cause, :decision_level
+    def initialize(term, cause, decision_level)
       @term = term
       @cause = cause
-      @level = level
+      @decision_level = decision_level
     end
 
-    def self.decision(version, level)
+    def self.decision(version, decision_level)
       term = Term.new(VersionConstraint.exact(version), true)
-      new(term, :decision, level)
+      new(term, :decision, decision_level)
     end
   end
 end

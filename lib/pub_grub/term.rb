@@ -22,14 +22,18 @@ module PubGrub
     end
 
     def intersect(other)
-      new_constraint =
-        if positive != other.positive
-          normalized_constraint.intersect(other.normalized_constraint)
-        else
-          constraint.intersect(other.constraint)
-        end
+      raise ArgumentError, "packages must match" if package != other.package
 
-      self.class.new(new_constraint, positive)
+      if positive != other.positive
+        self.class.new(normalized_constraint.intersect(other.normalized_constraint), true)
+      else
+        self.class.new(constraint.intersect(other.constraint), positive)
+      end
+    end
+
+    def difference(other)
+      puts("difference(#{inspect}, #{other.inspect})")
+      intersect(other.invert)
     end
 
     def relation(other)
@@ -40,8 +44,15 @@ module PubGrub
       positive ? constraint : constraint.invert
     end
 
+    def satisfies?(other)
+      raise ArgumentError, "packages must match" unless package == other.package
+
+      relation(other) == :subset
+    end
+
     extend Forwardable
-    def_delegators :@constraint, :package, :versions
+    def_delegators :@constraint, :package
+    def_delegators :normalized_constraint, :versions
 
     def positive?
       @positive
@@ -49,6 +60,14 @@ module PubGrub
 
     def negative?
       !positive?
+    end
+
+    def empty?
+      positive? && constraint.empty?
+    end
+
+    def inspect
+      "#<#{self.class} #{self}>"
     end
   end
 end

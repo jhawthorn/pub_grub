@@ -39,6 +39,10 @@ module PubGrub
       end
     end
 
+    def inspect
+      "#<#{self.class} #{name.inspect} (#{versions.count} versions)>"
+    end
+
     class RootPackage < Package
       class Version < Package::Version
         def to_s

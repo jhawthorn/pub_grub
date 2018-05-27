@@ -50,9 +50,10 @@ module PubGrub
           deps = @deps_by_version[requesting_version]
           deps && deps[dep_package_name] && deps[dep_package_name] == dep_constraint_name
         end
-        singular = (bitmap == 1 << version.id)
         description =
-          if singular
+          if (bitmap == (1 << package.versions.length) - 1)
+            "any"
+          elsif (bitmap == 1 << version.id)
             version.name
           else
             "requiring #{dep_package_name} #{dep_constraint_name}"

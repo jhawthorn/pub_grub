@@ -106,6 +106,10 @@ module PubGrub
       end
     end
 
+    def empty?
+      bitmap == 0
+    end
+
     def inspect
       "#<#{self.class} #{self} (#{bitmap.to_s(2).rjust(package.versions.count, "0")})>"
     end

@@ -2,7 +2,7 @@ require 'pub_grub/assignment'
 
 module PubGrub
   class PartialSolution
-    attr_reader :assignments, :decisions, :level
+    attr_reader :assignments, :decisions
 
     def initialize
       @assignments = []
@@ -12,8 +12,10 @@ module PubGrub
 
       # { Package => Term }
       @positive = {}
+    end
 
-      @level = 0
+    def decision_level
+      @decisions.length
     end
 
     def relation(term)
@@ -28,7 +30,30 @@ module PubGrub
     end
 
     def derive(term, cause)
-      add_assignment Assignment.new(term, cause, level)
+      add_assignment(Assignment.new(term, cause, decision_level))
+    end
+
+    def satisfier(term)
+      assigned_term = nil
+
+      assignments.each_with_index do |assignment, index|
+        next unless assignment.term.package == term.package
+
+        print "#{index}: "
+        pp assignment
+
+        if assigned_term
+          assigned_term = assigned_term.intersect(assignment.term)
+        else
+          assigned_term = assignment.term
+        end
+
+        if assigned_term.satisfies?(term)
+          return assignment, index
+        end
+      end
+
+      raise "#{term} unsatisfied"
     end
 
     # A list of unsatisfied terms
@@ -40,8 +65,22 @@ module PubGrub
 
     def decide(version)
       decisions[version.package] = version
-      assignment = Assignment.decision(version, level)
+      assignment = Assignment.decision(version, decision_level)
       add_assignment(assignment)
+    end
+
+    def backtrack(previous_level)
+      new_assignments = assignments.select do |assignment|
+        assignment.decision_level <= previous_level
+      end
+
+      @decisions = Hash[decisions.first(previous_level)]
+      @assignments = []
+      @positive = {}
+
+      new_assignments.each do |assignment|
+        add_assignment(assignment)
+      end
     end
 
     private
