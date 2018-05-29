@@ -41,7 +41,7 @@ module PubGrub
     end
 
     def normalized_constraint
-      positive ? constraint : constraint.invert
+      @normalized_constraint ||= positive ? constraint : constraint.invert
     end
 
     def satisfies?(other)
@@ -63,7 +63,7 @@ module PubGrub
     end
 
     def empty?
-      positive? && constraint.empty?
+      @empty ||= normalized_constraint.empty?
     end
 
     def inspect
