@@ -42,9 +42,6 @@ module PubGrub
       assignments.each_with_index do |assignment, index|
         next unless assignment.term.package == term.package
 
-        print "#{index}: "
-        pp assignment
-
         if assigned_term
           assigned_term = assigned_term.intersect(assignment.term)
         else

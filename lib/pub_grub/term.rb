@@ -32,7 +32,7 @@ module PubGrub
     end
 
     def difference(other)
-      puts("difference(#{inspect}, #{other.inspect})")
+      puts("difference(#{inspect}, #{other.inspect}) = #{intersect(other.invert)}")
       intersect(other.invert)
     end
 

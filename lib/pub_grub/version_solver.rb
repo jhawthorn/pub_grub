@@ -30,7 +30,14 @@ module PubGrub
         next_package = choose_package_version
       end
 
-      solution.decisions.values
+      result = solution.decisions.values
+
+      logger.debug "Solution is:"
+      result.each do |version|
+        logger.debug "* #{version}"
+      end
+
+      result
     end
 
     private
@@ -114,12 +121,9 @@ module PubGrub
         current_term = nil
         current_satisfier = nil
         current_index = nil
+        difference = nil
 
         previous_level = 1
-
-        p incompatibility
-        p incompatibility.terms.map(&:constraint)
-        pp solution.decisions
 
         incompatibility.terms.each do |term|
           satisfier, index = solution.satisfier(term)
@@ -133,21 +137,31 @@ module PubGrub
             current_satisfier = satisfier
             current_term = term
             current_index = index
+            puts "clearing difference" if difference
+            difference = nil
           else
             previous_level = [previous_level, current_satisfier.decision_level].max
           end
 
           if current_term == term
             difference = current_satisfier.term.difference(current_term)
-            if !difference.empty?
-              p difference
-              raise "TODO"
+            p difference
+            p difference.normalized_constraint
+            if difference.empty?
+              difference = nil
+            else
+              difference_satisfier, _ = solution.satisfier(difference)
+              previous_level = [previous_level, difference_satisfier.decision_level].max
             end
           end
         end
 
         if previous_level < current_satisfier.decision_level ||
             current_satisfier.cause.nil?
+
+          puts "#{previous_level} < #{current_satisfier.decision_level}"
+          puts "satisfier:"
+          p current_satisfier
 
           solution.backtrack(previous_level)
 
@@ -163,12 +177,18 @@ module PubGrub
         new_terms += current_satisfier.cause.terms.reject { |term|
           term.package == current_satisfier.term.package
         }
+        if difference
+          p difference
+          new_terms << difference.invert
+          p new_terms
+        end
 
         incompatibility = Incompatibility.new(new_terms)
 
         new_incompatibility = true
 
-        logger.info "! #{current_term} is satisfied by #{current_satisfier.term}"
+        partially = difference ? " partially" : ""
+        logger.info "! #{current_term} is#{partially} satisfied by #{current_satisfier.term}"
         logger.info "! which is caused by #{current_satisfier.cause}"
         logger.info "! thus #{incompatibility}"
       end

@@ -103,5 +103,27 @@ module PubGrub
         'foo' => '1.0.0'
       }
     end
+
+    ## Fourth example from pub's solver.md documentation
+    ## https://github.com/dart-lang/pub/blob/master/doc/solver.md#performing-conflict-resolution
+    def test_conflict_resolution_with_partial_satisfier
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'foo' => '~> 1.0', 'target' => '2.0.0' }
+
+        s.add 'foo', '1.1.0', deps: { 'left' => '~> 1.0', 'right' => '~> 1.0' }
+        s.add 'foo', '1.0.0'
+        s.add 'left', '1.0.0', deps: { 'shared' => '>= 1.0.0' }
+        s.add 'right', '1.0.0', deps: { 'shared' => '< 2.0.0' }
+        s.add 'shared', '2.0.0'
+        s.add 'shared', '1.0.0', deps: { 'target' => '~> 1.0' }
+        s.add 'target', '2.0.0'
+        s.add 'target', '1.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      pp result
+    end
   end
 end
