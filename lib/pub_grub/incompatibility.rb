@@ -14,7 +14,23 @@ module PubGrub
     end
 
     def to_s
-      "{ #{terms.map(&:to_s).join(", ")} }"
+      case cause
+      when :dependency
+        raise unless terms.length == 2
+        "#{terms[0]} depends on #{terms[1].invert}"
+      else
+        # generic
+        if terms.length == 1
+          term = terms[0]
+          if term.positive?
+            "#{terms[0]} is forbidden"
+          else
+            "#{terms[0].invert} is required"
+          end
+        else
+          "one of { #{terms.map(&:to_s).join(", ")} } must be false"
+        end
+      end
     end
 
     def inspect
