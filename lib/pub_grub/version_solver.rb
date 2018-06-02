@@ -91,12 +91,14 @@ module PubGrub
         return nil
       end
 
-      logger.debug "Chosing from unsatisfied: #{unsatisfied.map(&:to_s).join(", ")}"
+      logger.debug "Chosing from unsatisfied: #{unsatisfied.map{|t| "#{t} (#{t.versions.count})" }.join(", ")}"
 
       # Pub has some smart logic and additional behaviour here
       # I'm just going to pick the first version of the first package
 
-      version = unsatisfied.first.versions.first
+      version = unsatisfied.min_by do |term|
+        term.versions.count
+      end.versions.first
 
       # It would also be good to avoid making the decision if the decision will
       # cause a conflict, as pubgrub does.
@@ -163,6 +165,7 @@ module PubGrub
           puts "satisfier:"
           p current_satisfier
 
+          logger.info "backtracking to #{previous_level}"
           solution.backtrack(previous_level)
 
           if new_incompatibility
@@ -187,6 +190,7 @@ module PubGrub
 
         new_incompatibility = true
 
+        p(difference: difference)
         partially = difference ? " partially" : ""
         logger.info "! #{current_term} is#{partially} satisfied by #{current_satisfier.term}"
         logger.info "! which is caused by #{current_satisfier.cause}"

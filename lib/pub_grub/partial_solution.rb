@@ -13,7 +13,7 @@ module PubGrub
       # { Package => Term }
       @terms = {}
 
-      # { Package => false }
+      # { Package => Boolean }
       @required = {}
     end
 

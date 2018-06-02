@@ -110,7 +110,7 @@ module PubGrub
       source = StaticPackageSource.new do |s|
         s.root deps: { 'foo' => '~> 1.0', 'target' => '2.0.0' }
 
-        s.add 'foo', '1.1.0', deps: { 'left' => '~> 1.0', 'right' => '~> 1.0' }
+        s.add 'foo', '1.1.0', deps: { 'right' => '~> 1.0', 'left' => '~> 1.0' }
         s.add 'foo', '1.0.0'
         s.add 'left', '1.0.0', deps: { 'shared' => '>= 1.0.0' }
         s.add 'right', '1.0.0', deps: { 'shared' => '< 2.0.0' }

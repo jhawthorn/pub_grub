@@ -20,6 +20,7 @@ module PubGrub
     def invert
       self.class.new(@constraint, !@positive)
     end
+    alias_method :inverse, :invert
 
     def intersect(other)
       raise ArgumentError, "packages must match" if package != other.package
@@ -52,7 +53,7 @@ module PubGrub
 
     extend Forwardable
     def_delegators :@constraint, :package
-    def_delegators :normalized_constraint, :versions
+    def_delegators :normalized_constraint, :versions, :constraint_string
 
     def positive?
       @positive

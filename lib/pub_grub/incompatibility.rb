@@ -10,7 +10,7 @@ module PubGrub
     end
 
     def failure?
-      terms.empty? || terms.length == 1 && terms[0].package.name == :root
+      terms.empty? || (terms.length == 1 && terms[0].package == Package.root)
     end
 
     def to_s
@@ -44,14 +44,30 @@ module PubGrub
         raise "#{term.inspect} must be a term" unless term.is_a?(Term)
       end
 
+      p cause
+      if terms.length != 1 && ConflictCause === cause
+        p terms
+        terms = terms.reject do |term|
+          term.positive? && term.package == Package.root
+        end
+        p terms
+      end
+
       # Optimized simple cases
       return terms if terms.length <= 1
       return terms if terms.length == 2 && terms[0].package != terms[1].package
 
       terms.group_by(&:package).map do |package, common_terms|
-        common_terms.inject do |acc, term|
+        term =
+          common_terms.inject do |acc, term|
           acc.intersect(term)
         end
+
+        if term.empty?
+          raise "Incompatibility should not have empty terms: #{term}"
+        end
+
+        term
       end
     end
   end
