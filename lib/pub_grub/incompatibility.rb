@@ -1,8 +1,11 @@
 module PubGrub
   class Incompatibility
-    attr_reader :terms
+    ConflictCause = Struct.new(:incompatibility, :satisfier)
 
-    def initialize(terms)
+    attr_reader :terms, :cause
+
+    def initialize(terms, cause:)
+      @cause = cause
       @terms = cleanup_terms(terms)
     end
 

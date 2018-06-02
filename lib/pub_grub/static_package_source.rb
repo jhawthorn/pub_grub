@@ -68,7 +68,7 @@ module PubGrub
         dep_package = get_package(dep_package_name)
         dep_constraint = VersionConstraint.new(dep_package, dep_constraint_name)
 
-        Incompatibility.new([Term.new(self_constraint, true), Term.new(dep_constraint, false)])
+        Incompatibility.new([Term.new(self_constraint, true), Term.new(dep_constraint, false)], cause: :dependency)
       end
     end
   end

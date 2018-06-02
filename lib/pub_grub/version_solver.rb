@@ -18,7 +18,7 @@ module PubGrub
 
       add_incompatibility Incompatibility.new([
         Term.new(VersionConstraint.any(Package.root), false)
-      ])
+      ], cause: :root)
     end
 
     def solve
@@ -183,7 +183,7 @@ module PubGrub
           p new_terms
         end
 
-        incompatibility = Incompatibility.new(new_terms)
+        incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, current_satisfier.cause))
 
         new_incompatibility = true
 
