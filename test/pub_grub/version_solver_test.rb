@@ -2,17 +2,6 @@ require "test_helper"
 
 module PubGrub
   class VersionSolverTest < Minitest::Test
-    def assert_solution(source, result, expected)
-      expected =
-        expected.map do |package, version|
-          source.version(package, version)
-        end
-      expected -= [Package.root_version]
-      result   -= [Package.root_version]
-
-      assert_equal expected, result
-    end
-
     def test_simple_dependency_tree
       source = StaticPackageSource.new do |s|
         s.add 'a', '1.0.0', deps: { 'aa' => '1.0.0', 'ab' => '1.0.0' }
