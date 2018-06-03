@@ -28,7 +28,20 @@ module PubGrub
             "#{terms[0].invert} is required"
           end
         else
-          "one of { #{terms.map(&:to_s).join(", ")} } must be false"
+          if terms.all?(&:positive?)
+            "one of #{terms.map(&:to_s).join(" or ")} must be false"
+          elsif terms.all?(&:negative?)
+            "one of #{terms.map(&:invert).join(" or ")} must be true";
+          else
+            positive = terms.select(&:positive?)
+            negative = terms.select(&:negative?).map(&:invert)
+
+            if positive.length == 1
+              "#{positive[0]} requires #{negative.join(" or ")}"
+            else
+              "if #{positive.join(" and ")} then #{negative.join(" or ")}"
+            end
+          end
         end
       end
     end
