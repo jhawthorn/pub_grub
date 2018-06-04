@@ -18,6 +18,10 @@ module PubGrub
       def inspect
         "#<#{self.class} #{package.name} #{name} (#{id})>"
       end
+
+      def <=>(other)
+        [package, id] <=> [other.package, other.id]
+      end
     end
 
     attr_reader :name, :versions
@@ -42,6 +46,10 @@ module PubGrub
 
     def inspect
       "#<#{self.class} #{name.inspect} (#{versions.count} versions)>"
+    end
+
+    def <=>(other)
+      name <=> other.name
     end
 
     class RootPackage < Package

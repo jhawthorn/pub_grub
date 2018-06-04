@@ -13,7 +13,7 @@ module PubGrubAssertions
     expected -= [PubGrub::Package.root_version]
     result   -= [PubGrub::Package.root_version]
 
-    assert_equal expected, result
+    assert_equal expected.sort, result.sort
   end
 end
 
