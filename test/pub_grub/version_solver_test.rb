@@ -50,6 +50,35 @@ module PubGrub
       }
     end
 
+    # From https://github.com/dart-lang/pub/blob/d84173eeb03c328ed533469108ce81b11d736a80/test/version_solver_test.dart#L697
+    def test_diamond_dependency_graph
+      source = StaticPackageSource.new do |s|
+        s.root deps: {
+          'a' => '>= 0',
+          'b' => '>= 0'
+        }
+
+        s.add 'a', '2.0.0', deps: { 'c' => '~> 1.0' }
+        s.add 'a', '1.0.0'
+
+        s.add 'b', '2.0.0', deps: { 'c' => '~> 3.0' }
+        s.add 'b', '1.0.0', deps: { 'c' => '~> 2.0' }
+
+        s.add 'c', '3.0.0'
+        s.add 'c', '2.0.0'
+        s.add 'c', '1.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'a' => '1.0.0',
+        'b' => '2.0.0',
+        'c' => '3.0.0'
+      }
+    end
+
 
     ############################################################################
     ## Examples from Pub's solver.md documentation                            ##
