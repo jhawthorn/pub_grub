@@ -25,10 +25,10 @@ module PubGrub
     def intersect(other)
       raise ArgumentError, "packages must match" if package != other.package
 
-      if positive != other.positive
-        self.class.new(normalized_constraint.intersect(other.normalized_constraint), true)
+      if positive? && other.positive
+        self.class.new(constraint.intersect(other.constraint), true)
       else
-        self.class.new(constraint.intersect(other.constraint), positive)
+        self.class.new(normalized_constraint.intersect(other.normalized_constraint), true)
       end
     end
 
