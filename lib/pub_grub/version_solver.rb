@@ -167,7 +167,7 @@ module PubGrub
         end
 
         if previous_level < current_satisfier.decision_level ||
-            current_satisfier.cause.nil?
+            current_satisfier.decision?
 
           puts "#{previous_level} < #{current_satisfier.decision_level}"
           puts "satisfier:"

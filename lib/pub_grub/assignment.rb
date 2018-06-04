@@ -11,5 +11,9 @@ module PubGrub
       term = Term.new(VersionConstraint.exact(version), true)
       new(term, :decision, decision_level)
     end
+
+    def decision?
+      cause == :decision
+    end
   end
 end
