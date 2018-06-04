@@ -91,7 +91,7 @@ module PubGrub
         return nil
       end
 
-      logger.debug "Chosing from unsatisfied: #{unsatisfied.map{|t| "#{t} (#{t.versions.count})" }.join(", ")}"
+      logger.debug "Choosing from unsatisfied: #{unsatisfied.map{|t| "#{t} (#{t.versions.count})" }.join(", ")}"
 
       # Pub has some smart logic and additional behaviour here
       # I'm just going to pick the first version of the first package
