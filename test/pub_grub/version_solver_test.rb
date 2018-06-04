@@ -50,7 +50,7 @@ module PubGrub
       }
     end
 
-    # From https://github.com/dart-lang/pub/blob/d84173eeb03c328ed533469108ce81b11d736a80/test/version_solver_test.dart#L697
+    # From https://github.com/dart-lang/pub/blob/d84173ee/test/version_solver_test.dart#L697
     def test_diamond_dependency_graph
       source = StaticPackageSource.new do |s|
         s.root deps: {
@@ -79,6 +79,40 @@ module PubGrub
       }
     end
 
+
+    # From https://github.com/dart-lang/pub/blob/d84173ee/test/version_solver_test.dart#L717
+    # c 2.0.0 is incompatible with y 2.0.0 because it requires x 1.0.0, but that
+    # requirement only exists because of both a and b. The solver should be able
+    # to deduce c 2.0.0's incompatibility and select c 1.0.0 instead.
+    def test_backjumps_after_a_partial_satisfier
+      source = StaticPackageSource.new do |s|
+        s.root deps: {
+          'c' => '>= 0',
+          'y' => '2.0.0'
+        }
+
+        s.add 'a', '1.0.0', deps: { 'x': '>= 1.0.0' }
+        s.add 'b', '1.0.0', deps: { 'x': '< 2.0.0' }
+
+        s.add 'c', '1.0.0'
+        s.add 'c', '2.0.0', deps: { 'a': '>= 0', 'b': '>= 0' }
+
+        s.add 'x', '0.0.0'
+        s.add 'x', '1.0.0', deps: { 'y': '1.0.0' }
+        s.add 'x', '2.0.0'
+
+        s.add 'y', '1.0.0'
+        s.add 'y', '2.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'c' => '1.0.0',
+        'y' => '2.0.0'
+      }
+    end
 
     ############################################################################
     ## Examples from Pub's solver.md documentation                            ##
