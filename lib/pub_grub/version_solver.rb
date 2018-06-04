@@ -103,12 +103,20 @@ module PubGrub
       # It would also be good to avoid making the decision if the decision will
       # cause a conflict, as pubgrub does.
 
-      logger.info("selecting #{version}")
-
-      solution.decide(version)
+      conflict = false
 
       source.incompatibilities_for(version).each do |incompatibility|
         add_incompatibility incompatibility
+
+        conflict ||= incompatibility.terms.all? do |term|
+          term.package == version.package || solution.satisfies?(term)
+        end
+      end
+
+      unless conflict
+        logger.info("selecting #{version}")
+
+        solution.decide(version)
       end
 
       version.package
