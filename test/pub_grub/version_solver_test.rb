@@ -114,6 +114,38 @@ module PubGrub
       }
     end
 
+    # From pub's test suite
+    def test_complex_backtrack
+      source = StaticPackageSource.new do |s|
+        s.root deps: {
+          'foo' => '>= 0',
+          'bar' => '>= 0'
+        }
+
+        # This sets up a hundred versions of foo and bar, 0.0.0 through 9.9.0. Each
+        # version of foo depends on a baz with the same major version. Each version
+        # of bar depends on a baz with the same minor version. There is only one
+        # version of baz, 0.0.0, so only older versions of foo and bar will
+        # satisfy it.
+        s.add 'baz', '0.0.0'
+        9.downto(0) do |i|
+          9.downto(0) do |j|
+            s.add 'foo', "#{i}.#{j}.0", deps: { 'baz' => "#{i}.0.0" }
+            s.add 'bar', "#{i}.#{j}.0", deps: { 'baz' => "0.#{j}.0" }
+          end
+        end
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'foo' => '0.9.0',
+        'bar' => '9.0.0',
+        'baz' => '0.0.0'
+      }
+    end
+
     ############################################################################
     ## Examples from Pub's solver.md documentation                            ##
     ## https://github.com/dart-lang/pub/blob/master/doc/solver.md             ##
