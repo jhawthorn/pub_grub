@@ -14,7 +14,7 @@ module PubGrub
       @terms = {}
 
       # { Package => Boolean }
-      @required = {}
+      @required = Set.new
     end
 
     def decision_level
@@ -58,8 +58,10 @@ module PubGrub
 
     # A list of unsatisfied terms
     def unsatisfied
-      @terms.values.reject do |term|
-        @decisions.key?(term.package)
+      @required.reject do |package|
+        @decisions.key?(package)
+      end.map do |package|
+        @terms[package]
       end
     end
 
@@ -77,7 +79,7 @@ module PubGrub
       @decisions = Hash[decisions.first(previous_level)]
       @assignments = []
       @terms = {}
-      @required = {}
+      @required = Set.new
 
       new_assignments.each do |assignment|
         add_assignment(assignment)
@@ -92,7 +94,7 @@ module PubGrub
       term = assignment.term
       package = term.package
 
-      @required[package] ||= term.positive?
+      @required.add(package) if term.positive?
 
       if @terms.key?(package)
         old_term = @terms[package]
