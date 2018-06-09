@@ -73,12 +73,23 @@ module PubGrub
       end
     end
 
-    def allows_all?(other)
-      bitmap.allbits?(other.bitmap)
-    end
+    if RUBY_VERSION >= "2.5"
+      def allows_all?(other)
+        bitmap.allbits?(other.bitmap)
+      end
 
-    def allows_any?(other)
-      bitmap.anybits?(other.bitmap)
+      def allows_any?(other)
+        bitmap.anybits?(other.bitmap)
+      end
+    else
+      def allows_all?(other)
+        other_bitmap = other.bitmap
+        (bitmap & other_bitmap) == other_bitmap
+      end
+
+      def allows_any?(other)
+        (bitmap & other.bitmap) != 0
+      end
     end
 
     def subset?(other)
