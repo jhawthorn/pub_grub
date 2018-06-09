@@ -144,7 +144,6 @@ module PubGrub
             current_satisfier = satisfier
             current_term = term
             current_index = index
-            puts "clearing difference" if difference
             difference = nil
           else
             previous_level = [previous_level, current_satisfier.decision_level].max
@@ -152,8 +151,6 @@ module PubGrub
 
           if current_term == term
             difference = current_satisfier.term.difference(current_term)
-            p difference
-            p difference.normalized_constraint
             if difference.empty?
               difference = nil
             else
@@ -165,10 +162,6 @@ module PubGrub
 
         if previous_level < current_satisfier.decision_level ||
             current_satisfier.decision?
-
-          puts "#{previous_level} < #{current_satisfier.decision_level}"
-          puts "satisfier:"
-          p current_satisfier
 
           logger.info "backtracking to #{previous_level}"
           solution.backtrack(previous_level)
@@ -186,16 +179,13 @@ module PubGrub
           term.package == current_satisfier.term.package
         }
         if difference
-          p difference
           new_terms << difference.invert
-          p new_terms
         end
 
         incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, current_satisfier.cause))
 
         new_incompatibility = true
 
-        p(difference: difference)
         partially = difference ? " partially" : ""
         logger.info "! #{current_term} is#{partially} satisfied by #{current_satisfier.term}"
         logger.info "! which is caused by #{current_satisfier.cause}"
