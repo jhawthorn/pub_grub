@@ -25,6 +25,9 @@ module PubGrub
     def intersect(other)
       raise ArgumentError, "packages must match" if package != other.package
 
+      return self if relation(other) == :subset
+      return other if other.relation(self) == :subset
+
       if positive? && other.positive
         self.class.new(constraint.intersect(other.constraint), true)
       else
