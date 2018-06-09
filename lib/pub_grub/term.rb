@@ -38,7 +38,31 @@ module PubGrub
     end
 
     def relation(other)
-      normalized_constraint.relation(other.normalized_constraint)
+      if positive? && other.positive?
+        constraint.relation(other.constraint)
+      elsif negative? && other.positive?
+        if constraint.allows_all?(other.constraint)
+          :disjoint
+        else
+          :overlap
+        end
+      elsif positive? && other.negative?
+        if !other.constraint.allows_any?(constraint)
+          :subset
+        elsif other.constraint.allows_all?(constraint)
+          :disjoint
+        else
+          :overlap
+        end
+      elsif negative? && other.negative?
+        if constraint.allows_all?(other.constraint)
+          :subset
+        else
+          :overlap
+        end
+      else
+        raise
+      end
     end
 
     def normalized_constraint
@@ -64,7 +88,7 @@ module PubGrub
     end
 
     def empty?
-      @empty ||= normalized_constraint.empty?
+      @empty ||= positive? && constraint.empty?
     end
 
     def inspect

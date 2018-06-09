@@ -73,12 +73,20 @@ module PubGrub
       end
     end
 
+    def allows_all?(other)
+      bitmap.allbits?(other.bitmap)
+    end
+
+    def allows_any?(other)
+      bitmap.anybits?(other.bitmap)
+    end
+
     def subset?(other)
-      other.bitmap.allbits?(bitmap)
+      other.allows_all?(self)
     end
 
     def overlap?(other)
-      other.bitmap.anybits?(bitmap)
+      other.allows_any?(self)
     end
 
     def disjoint?(other)
