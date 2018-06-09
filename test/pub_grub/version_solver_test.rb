@@ -207,7 +207,10 @@ module PubGrub
       solver = VersionSolver.new(source: source)
       result = solver.solve
 
-      pp result
+      assert_solution source, result, {
+        'foo' => '1.0.0',
+        'target' => '2.0.0'
+      }
     end
   end
 end
