@@ -91,17 +91,14 @@ module PubGrub
         return nil
       end
 
-      logger.debug "Choosing from unsatisfied: #{unsatisfied.map{|t| "#{t} (#{t.versions.count})" }.join(", ")}"
-
-      # Pub has some smart logic and additional behaviour here
-      # I'm just going to pick the first version of the first package
-
-      version = unsatisfied.min_by do |term|
+      unsatisfied_term = unsatisfied.min_by do |term|
         term.versions.count
-      end.versions.first
+      end
+      version = unsatisfied_term.versions.first
 
-      # It would also be good to avoid making the decision if the decision will
-      # cause a conflict, as pubgrub does.
+      if version.nil?
+        raise "required term with no versions: #{unsatisfied_term}"
+      end
 
       conflict = false
 
