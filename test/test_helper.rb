@@ -2,7 +2,7 @@ $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require 'minitest'
 require "pub_grub"
 
-PubGrub.logger.level = Logger::DEBUG
+PubGrub.logger.level = Logger::DEBUG if ENV['DEBUG']
 
 module PubGrubAssertions
   def assert_solution(source, result, expected)
