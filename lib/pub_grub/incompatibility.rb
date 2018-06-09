@@ -57,13 +57,14 @@ module PubGrub
         raise "#{term.inspect} must be a term" unless term.is_a?(Term)
       end
 
-      p cause
       if terms.length != 1 && ConflictCause === cause
-        p terms
         terms = terms.reject do |term|
           term.positive? && term.package == Package.root
         end
-        p terms
+      end
+
+      if terms.any?(&:empty?)
+        raise "Incompatibility should not have empty terms: #{terms.select(&:empty?)}"
       end
 
       # Optimized simple cases
