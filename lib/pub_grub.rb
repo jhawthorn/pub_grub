@@ -4,6 +4,7 @@ require "pub_grub/term"
 require "pub_grub/version_constraint"
 require "pub_grub/version_solver"
 require "pub_grub/incompatibility"
+require 'pub_grub/solve_failure'
 
 require "logger"
 

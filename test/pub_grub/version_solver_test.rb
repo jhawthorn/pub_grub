@@ -212,5 +212,24 @@ module PubGrub
         'target' => '2.0.0'
       }
     end
+
+    ## Fifth example from pub's solver.md documentation
+    ## https://github.com/dart-lang/pub/blob/master/doc/solver.md#linear-error-reporting
+    def test_linear_error_reporting
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'foo' => '~> 1.0', 'baz' => '~> 1.0' }
+
+        s.add 'foo', '1.0.0', deps: { 'bar' => '~> 2.0' }
+        s.add 'bar', '2.0.0', deps: { 'baz' => '~> 3.0' }
+        s.add 'baz', '1.0.0'
+        s.add 'baz', '3.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      assert_raises PubGrub::SolveFailure do
+        solver.solve
+      end
+    end
   end
 end

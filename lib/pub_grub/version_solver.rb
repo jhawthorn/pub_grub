@@ -1,5 +1,7 @@
 require 'pub_grub/partial_solution'
 require 'pub_grub/term'
+require 'pub_grub/incompatibility'
+require 'pub_grub/solve_failure'
 
 module PubGrub
   class VersionSolver
@@ -192,7 +194,7 @@ module PubGrub
         logger.info "! thus #{incompatibility}"
       end
 
-      raise "Solving failed!"
+      raise SolveFailure.new(incompatibility)
     end
 
     def add_incompatibility(incompatibility)
