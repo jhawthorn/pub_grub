@@ -10,7 +10,7 @@ module PubGrub
     end
 
     def failure?
-      terms.empty? || (terms.length == 1 && terms[0].package == Package.root)
+      terms.empty? || (terms.length == 1 && terms[0].package == Package.root && terms[0].positive?)
     end
 
     def to_s
@@ -19,8 +19,9 @@ module PubGrub
         raise unless terms.length == 2
         "#{terms[0]} depends on #{terms[1].invert}"
       else
-        # generic
-        if terms.length == 1
+        if failure?
+          "version solving has failed"
+        elsif terms.length == 1
           term = terms[0]
           if term.positive?
             "#{terms[0]} is forbidden"
