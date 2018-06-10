@@ -231,5 +231,32 @@ module PubGrub
         solver.solve
       end
     end
+
+    ## Sixth example from pub's solver.md documentation
+    ## https://github.com/dart-lang/pub/blob/master/doc/solver.md#linear-error-reporting
+    def test_branching_error_reporting
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'foo' => '~> 1.0' }
+
+        s.add 'foo', '1.0.0', deps: { 'a' => '~> 1.0', 'b' => '~> 1.0' }
+        s.add 'foo', '1.1.0', deps: { 'x' => '~> 1.0', 'y' => '~> 1.0' }
+
+        s.add 'a', '1.0.0', deps: { 'b' => '~> 2.0' }
+
+        s.add 'b', '1.0.0'
+        s.add 'b', '2.0.0'
+
+        s.add 'x', '1.0.0', deps: { 'y' => '~> 2.0' }
+
+        s.add 'y', '1.0.0'
+        s.add 'y', '2.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      assert_raises PubGrub::SolveFailure do
+        solver.solve
+      end
+    end
   end
 end

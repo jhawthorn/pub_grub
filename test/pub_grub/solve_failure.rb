@@ -4,27 +4,51 @@ module PubGrub
       @incompatibility = incompatibility
     end
 
-    def visit(incompatibility)
-      output = []
+    class Output
+      def initialize(root)
+        @root = root
+      end
+    end
 
-      cause = incompatibility.cause
-      case cause
-      when PubGrub::Incompatibility::ConflictCause
-        output << incompatibility.to_s
-        output += visit(cause.incompatibility)
-        output += visit(cause.satisfier)
-      when :dependency
-        output << "#{incompatibility} (dependency)"
-      else
-        raise "don't know how to deal with: #{incompatibility.cause.inspect}"
+    class NumberedOutput < Output
+      def initialize(root)
+        super(root)
+        @numbers = Hash.new do |h, k|
+          h[k] = h.size
+        end
       end
 
-      output
+      def visit(incompatibility)
+        cause = incompatibility.cause
+        if PubGrub::Incompatibility::ConflictCause === cause
+          visit(cause.incompatibility)
+          visit(cause.satisfier)
+        end
+
+        @numbers[incompatibility]
+      end
+
+      def list
+        visit(@root)
+
+        @numbers.map do |incompatibility, n|
+          s = "#{n}. #{incompatibility}"
+          cause = incompatibility.cause
+          case cause
+          when PubGrub::Incompatibility::ConflictCause
+            s << " (##{@numbers[cause.incompatibility]} and ##{@numbers[cause.satisfier]})"
+          when :dependency
+            s << " (dependency)"
+          else
+            raise "unknown cause: #{cause.inspect}"
+          end
+          s
+        end
+      end
     end
 
     def to_s
-      output = visit(@incompatibility)
-      "\n" + output.reverse.map(&:to_s).join("\n")
+      "\n" + NumberedOutput.new(@incompatibility).list.join("\n")
     end
   end
 end
