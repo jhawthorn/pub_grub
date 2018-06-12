@@ -31,7 +31,7 @@ module PubGrub
       if positive? && other.positive?
         self.class.new(constraint.intersect(other.constraint), true)
       elsif negative? && other.negative?
-        self.class.new(constraint.intersect(other.constraint), false)
+        self.class.new(constraint.union(other.constraint), false)
       else
         positive = positive? ? self : other
         negative = negative? ? self : other

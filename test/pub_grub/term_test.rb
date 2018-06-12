@@ -41,7 +41,7 @@ module PubGrub
 
       term = a.intersect(b)
 
-      assert_equal "not pkg 1.0.0, 2.0.0", term.to_s
+      assert_equal "not pkg 1.0.0 OR 2.0.0", term.to_s
       assert_equal 0b010, term.normalized_constraint.bitmap
       refute term.empty?
     end
