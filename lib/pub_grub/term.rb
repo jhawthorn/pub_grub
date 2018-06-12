@@ -28,10 +28,14 @@ module PubGrub
       return self if relation(other) == :subset
       return other if other.relation(self) == :subset
 
-      if positive? && other.positive
+      if positive? && other.positive?
         self.class.new(constraint.intersect(other.constraint), true)
+      elsif negative? && other.negative?
+        self.class.new(constraint.intersect(other.constraint), false)
       else
-        self.class.new(normalized_constraint.intersect(other.normalized_constraint), true)
+        positive = positive? ? self : other
+        negative = negative? ? self : other
+        self.class.new(positive.constraint.intersect(negative.constraint.invert), true)
       end
     end
 
