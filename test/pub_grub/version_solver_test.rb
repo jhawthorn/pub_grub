@@ -219,10 +219,10 @@ module PubGrub
       source = StaticPackageSource.new do |s|
         s.root deps: { 'foo' => '~> 1.0', 'baz' => '~> 1.0' }
 
-        s.add 'foo', '1.0.0', deps: { 'bar' => '~> 2.0' }
         s.add 'bar', '2.0.0', deps: { 'baz' => '~> 3.0' }
-        s.add 'baz', '1.0.0'
+        s.add 'foo', '1.0.0', deps: { 'bar' => '~> 2.0' }
         s.add 'baz', '3.0.0'
+        s.add 'baz', '1.0.0'
       end
 
       solver = VersionSolver.new(source: source)
@@ -238,18 +238,18 @@ module PubGrub
       source = StaticPackageSource.new do |s|
         s.root deps: { 'foo' => '~> 1.0' }
 
-        s.add 'foo', '1.0.0', deps: { 'a' => '~> 1.0', 'b' => '~> 1.0' }
-        s.add 'foo', '1.1.0', deps: { 'x' => '~> 1.0', 'y' => '~> 1.0' }
+        s.add 'foo', '1.1.0', deps: { 'y' => '~> 1.0', 'x' => '~> 1.0' }
+        s.add 'foo', '1.0.0', deps: { 'b' => '~> 1.0', 'a' => '~> 1.0' }
 
         s.add 'a', '1.0.0', deps: { 'b' => '~> 2.0' }
 
-        s.add 'b', '1.0.0'
         s.add 'b', '2.0.0'
+        s.add 'b', '1.0.0'
 
         s.add 'x', '1.0.0', deps: { 'y' => '~> 2.0' }
 
-        s.add 'y', '1.0.0'
         s.add 'y', '2.0.0'
+        s.add 'y', '1.0.0'
       end
 
       solver = VersionSolver.new(source: source)
