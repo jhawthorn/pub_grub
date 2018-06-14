@@ -3,6 +3,7 @@ require 'pub_grub/assignment'
 module PubGrub
   class PartialSolution
     attr_reader :assignments, :decisions
+    attr_reader :attempted_solutions
 
     def initialize
       @assignments = []
@@ -15,6 +16,9 @@ module PubGrub
 
       # { Package => Boolean }
       @required = Set.new
+
+      @attempted_solutions = 1
+      @backtrack = false
     end
 
     def decision_level
@@ -66,12 +70,17 @@ module PubGrub
     end
 
     def decide(version)
+      @attempted_solutions += 1 if @backtracking
+      @backtracking = false;
+
       decisions[version.package] = version
       assignment = Assignment.decision(version, decision_level)
       add_assignment(assignment)
     end
 
     def backtrack(previous_level)
+      @backtracking = true
+
       new_assignments = assignments.select do |assignment|
         assignment.decision_level <= previous_level
       end

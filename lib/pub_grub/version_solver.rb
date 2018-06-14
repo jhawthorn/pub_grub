@@ -34,9 +34,9 @@ module PubGrub
 
       result = solution.decisions.values
 
-      logger.debug "Solution is:"
+      logger.info "Solution found after #{solution.attempted_solutions} attempts:"
       result.each do |version|
-        logger.debug "* #{version}"
+        logger.info "* #{version}"
       end
 
       result
