@@ -64,10 +64,6 @@ module PubGrub
         end
       end
 
-      if terms.any?(&:empty?)
-        raise "Incompatibility should not have empty terms: #{terms.select(&:empty?)}"
-      end
-
       # Optimized simple cases
       return terms if terms.length <= 1
       return terms if terms.length == 2 && terms[0].package != terms[1].package

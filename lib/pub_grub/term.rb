@@ -94,7 +94,7 @@ module PubGrub
     end
 
     def empty?
-      @empty ||= positive? && constraint.empty?
+      @empty ||= normalized_constraint.empty?
     end
 
     def inspect
