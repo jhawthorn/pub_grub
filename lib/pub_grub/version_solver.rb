@@ -127,9 +127,9 @@ module PubGrub
       new_incompatibility = false
 
       while !incompatibility.failure?
-        current_term = nil
-        current_satisfier = nil
-        current_index = nil
+        most_recent_term = nil
+        most_recent_satisfier = nil
+        most_recent_index = nil
         difference = nil
 
         previous_level = 1
@@ -137,22 +137,22 @@ module PubGrub
         incompatibility.terms.each do |term|
           satisfier, index = solution.satisfier(term)
 
-          if current_satisfier.nil?
-            current_term = term
-            current_satisfier = satisfier
-            current_index = index
-          elsif current_index < index
-            previous_level = [previous_level, current_satisfier.decision_level].max
-            current_satisfier = satisfier
-            current_term = term
-            current_index = index
+          if most_recent_satisfier.nil?
+            most_recent_term = term
+            most_recent_satisfier = satisfier
+            most_recent_index = index
+          elsif most_recent_index < index
+            previous_level = [previous_level, most_recent_satisfier.decision_level].max
+            most_recent_satisfier = satisfier
+            most_recent_term = term
+            most_recent_index = index
             difference = nil
           else
-            previous_level = [previous_level, current_satisfier.decision_level].max
+            previous_level = [previous_level, most_recent_satisfier.decision_level].max
           end
 
-          if current_term == term
-            difference = current_satisfier.term.difference(current_term)
+          if most_recent_term == term
+            difference = most_recent_satisfier.term.difference(most_recent_term)
             if difference.empty?
               difference = nil
             else
@@ -162,8 +162,8 @@ module PubGrub
           end
         end
 
-        if previous_level < current_satisfier.decision_level ||
-            current_satisfier.decision?
+        if previous_level < most_recent_satisfier.decision_level ||
+            most_recent_satisfier.decision?
 
           logger.info "backtracking to #{previous_level}"
           solution.backtrack(previous_level)
@@ -176,21 +176,21 @@ module PubGrub
         end
 
         new_terms = []
-        new_terms += incompatibility.terms - [current_term]
-        new_terms += current_satisfier.cause.terms.reject { |term|
-          term.package == current_satisfier.term.package
+        new_terms += incompatibility.terms - [most_recent_term]
+        new_terms += most_recent_satisfier.cause.terms.reject { |term|
+          term.package == most_recent_satisfier.term.package
         }
         if difference
           new_terms << difference.invert
         end
 
-        incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, current_satisfier.cause))
+        incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, most_recent_satisfier.cause))
 
         new_incompatibility = true
 
         partially = difference ? " partially" : ""
-        logger.info "! #{current_term} is#{partially} satisfied by #{current_satisfier.term}"
-        logger.info "! which is caused by #{current_satisfier.cause}"
+        logger.info "! #{most_recent_term} is#{partially} satisfied by #{most_recent_satisfier.term}"
+        logger.info "! which is caused by #{most_recent_satisfier.cause}"
         logger.info "! thus #{incompatibility}"
       end
 
