@@ -129,26 +129,23 @@ module PubGrub
       while !incompatibility.failure?
         most_recent_term = nil
         most_recent_satisfier = nil
-        most_recent_index = nil
         difference = nil
 
         previous_level = 1
 
         incompatibility.terms.each do |term|
-          satisfier, index = solution.satisfier(term)
+          satisfier = solution.satisfier(term)
 
           if most_recent_satisfier.nil?
             most_recent_term = term
             most_recent_satisfier = satisfier
-            most_recent_index = index
-          elsif most_recent_index < index
+          elsif most_recent_satisfier.index < satisfier.index
             previous_level = [previous_level, most_recent_satisfier.decision_level].max
-            most_recent_satisfier = satisfier
             most_recent_term = term
-            most_recent_index = index
+            most_recent_satisfier = satisfier
             difference = nil
           else
-            previous_level = [previous_level, most_recent_satisfier.decision_level].max
+            previous_level = [previous_level, satisfier.decision_level].max
           end
 
           if most_recent_term == term
@@ -156,7 +153,7 @@ module PubGrub
             if difference.empty?
               difference = nil
             else
-              difference_satisfier, _ = solution.satisfier(difference)
+              difference_satisfier = solution.satisfier(difference)
               previous_level = [previous_level, difference_satisfier.decision_level].max
             end
           end

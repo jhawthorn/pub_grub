@@ -37,13 +37,13 @@ module PubGrub
     end
 
     def derive(term, cause)
-      add_assignment(Assignment.new(term, cause, decision_level))
+      add_assignment(Assignment.new(term, cause, decision_level, assignments.length))
     end
 
     def satisfier(term)
       assigned_term = nil
 
-      assignments.each_with_index do |assignment, index|
+      assignments.each do |assignment|
         next unless assignment.term.package == term.package
 
         if assigned_term
@@ -53,7 +53,7 @@ module PubGrub
         end
 
         if assigned_term.satisfies?(term)
-          return assignment, index
+          return assignment
         end
       end
 
@@ -74,7 +74,7 @@ module PubGrub
       @backtracking = false;
 
       decisions[version.package] = version
-      assignment = Assignment.decision(version, decision_level)
+      assignment = Assignment.decision(version, decision_level, assignments.length)
       add_assignment(assignment)
     end
 
