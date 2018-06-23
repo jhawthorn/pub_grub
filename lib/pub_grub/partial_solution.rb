@@ -6,16 +6,7 @@ module PubGrub
     attr_reader :attempted_solutions
 
     def initialize
-      @assignments = []
-
-      # { Package => Package::Version }
-      @decisions = {}
-
-      # { Package => Term }
-      @terms = {}
-
-      # { Package => Boolean }
-      @required = Set.new
+      reset!
 
       @attempted_solutions = 1
       @backtrack = false
@@ -43,8 +34,8 @@ module PubGrub
     def satisfier(term)
       assigned_term = nil
 
-      assignments.each do |assignment|
-        next unless assignment.term.package == term.package
+      @assignments_by[term.package].each do |assignment|
+        raise unless assignment.term.package == term.package
 
         if assigned_term
           assigned_term = assigned_term.intersect(assignment.term)
@@ -85,10 +76,11 @@ module PubGrub
         assignment.decision_level <= previous_level
       end
 
-      @decisions = Hash[decisions.first(previous_level)]
-      @assignments = []
-      @terms = {}
-      @required = Set.new
+      new_decisions = Hash[decisions.first(previous_level)]
+
+      reset!
+
+      @decisions = new_decisions
 
       new_assignments.each do |assignment|
         add_assignment(assignment)
@@ -97,8 +89,26 @@ module PubGrub
 
     private
 
+    def reset!
+      # { Array<Assignment> }
+      @assignments = []
+
+      # { Package => Array<Assignment> }
+      @assignments_by = Hash.new { |h,k| h[k] = [] }
+
+      # { Package => Package::Version }
+      @decisions = {}
+
+      # { Package => Term }
+      @terms = {}
+
+      # { Package => Boolean }
+      @required = Set.new
+    end
+
     def add_assignment(assignment)
       @assignments << assignment
+      @assignments_by[assignment.term.package] << assignment
 
       term = assignment.term
       package = term.package
