@@ -34,7 +34,7 @@ module PubGrub
 
     def version(version)
       @versions.detect { |v| v.name == version } ||
-        raise("No such version: #{version.inspect}")
+        raise("No such version of #{name.inspect}: #{version.inspect}")
     end
     alias_method :[], :version
 
