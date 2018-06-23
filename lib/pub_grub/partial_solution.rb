@@ -1,4 +1,5 @@
 require 'pub_grub/assignment'
+require 'set'
 
 module PubGrub
   class PartialSolution
