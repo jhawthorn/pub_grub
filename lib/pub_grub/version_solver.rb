@@ -153,7 +153,7 @@ module PubGrub
             if difference.empty?
               difference = nil
             else
-              difference_satisfier = solution.satisfier(difference)
+              difference_satisfier = solution.satisfier(difference.inverse)
               previous_level = [previous_level, difference_satisfier.decision_level].max
             end
           end
