@@ -35,8 +35,6 @@ module PubGrub
       assigned_term = nil
 
       @assignments_by[term.package].each do |assignment|
-        raise unless assignment.term.package == term.package
-
         if assigned_term
           assigned_term = assigned_term.intersect(assignment.term)
         else

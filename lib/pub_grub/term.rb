@@ -2,10 +2,11 @@ require 'forwardable'
 
 module PubGrub
   class Term
-    attr_reader :constraint, :positive
+    attr_reader :package, :constraint, :positive
 
     def initialize(constraint, positive)
       @constraint = constraint
+      @package = @constraint.package
       @positive = positive
     end
 
@@ -82,8 +83,7 @@ module PubGrub
     end
 
     extend Forwardable
-    def_delegators :@constraint, :package
-    def_delegators :normalized_constraint, :versions, :constraint_string
+    def_delegators :normalized_constraint, :versions
 
     def positive?
       @positive
