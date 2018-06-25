@@ -27,7 +27,7 @@ module PubGrub
       assert_kind_of Package::Version, version
       assert_equal package, version.package
       assert_equal "1.0.0", version.name
-      assert_equal "pkg 1.0.0", version.to_s
+      assert_equal "1.0.0", version.to_s
     end
   end
 end

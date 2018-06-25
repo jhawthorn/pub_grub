@@ -12,7 +12,7 @@ module PubGrub
       end
 
       def to_s
-        "#{package.name} #{name}"
+        name
       end
 
       def inspect
