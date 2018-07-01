@@ -47,7 +47,7 @@ module PubGrub
     def propagate(initial_package)
       changed = [initial_package]
       while package = changed.shift
-        @incompatibilities[package].each do |incompatibility|
+        @incompatibilities[package].reverse_each do |incompatibility|
           result = propagate_incompatibility(incompatibility)
           if result == :conflict
             root_cause = resolve_conflict(incompatibility)
