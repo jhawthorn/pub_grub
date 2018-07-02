@@ -104,8 +104,24 @@ module PubGrub
             "Because #{ext} and #{derived} (#{derived_line}), #{incompatibility}.",
             numbered: numbered
           )
+        elsif collapsible?(derived)
+          derived_cause = derived.cause
+          if derived_cause.conflict.conflict?
+            collapsed_derived = derived_cause.conflict
+            collapsed_ext = derived_cause.other
+          else
+            collapsed_derived = derived_cause.other
+            collapsed_ext = derived_cause.conflict
+          end
+
+          visit(collapsed_derived)
+
+          write_line(
+            incompatibility,
+            "#{conjunction} because #{collapsed_ext} and #{ext}, #{incompatibility}.",
+            numbered: numbered
+          )
         else
-          # TODO: collapsible
           visit(derived)
           write_line(
             incompatibility,
@@ -124,6 +140,25 @@ module PubGrub
 
     def single_line?(cause)
       !cause.conflict.conflict? && !cause.other.conflict?
+    end
+
+    def collapsible?(incompatibility)
+      return false if @derivations[incompatibility] > 1
+
+      cause = incompatibility.cause
+      # If incompatibility is derived from two derived incompatibilities,
+      # there are too many transitive causes to display concisely.
+      return false if cause.conflict.conflict? && cause.other.conflict?
+
+      # If incompatibility is derived from two external incompatibilities, it
+      # tends to be confusing to collapse it.
+      return false unless cause.conflict.conflict? || cause.other.conflict?
+
+      # If incompatibility's internal cause is numbered, collapsing it would
+      # get too noisy.
+      complex = cause.conflict.conflict? ? cause.conflict : cause.other
+
+      !@line_numbers.has_key?(complex)
     end
 
     def count_derivations(incompatibility)
