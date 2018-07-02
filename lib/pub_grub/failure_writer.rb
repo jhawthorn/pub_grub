@@ -21,6 +21,8 @@ module PubGrub
       padding = @line_numbers.empty? ? 0 : "(#{@line_numbers.values.last}) ".length
 
       @lines.map do |message, number|
+        next "" if message.empty?
+
         lead = number ? "(#{number}) " : ""
         lead = lead.ljust(padding)
         "#{lead}#{message}"
