@@ -30,9 +30,17 @@ module PubGrub
           end
         else
           if terms.all?(&:positive?)
-            "one of #{terms.map(&:to_s).join(" or ")} must be false"
+            if terms.length == 2
+              "#{terms[0]} is incompatible with #{terms[1]}"
+            else
+              "one of #{terms.map(&:to_s).join(" or ")} must be false"
+            end
           elsif terms.all?(&:negative?)
-            "one of #{terms.map(&:invert).join(" or ")} must be true";
+            if terms.length == 2
+              "either #{terms[0]} or #{terms[1]}"
+            else
+              "one of #{terms.map(&:invert).join(" or ")} must be true";
+            end
           else
             positive = terms.select(&:positive?)
             negative = terms.select(&:negative?).map(&:invert)
