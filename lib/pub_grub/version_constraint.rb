@@ -126,7 +126,11 @@ module PubGrub
     end
 
     def to_s
-      "#{package.name} #{constraint_string}"
+      if package == Package.root
+        "root"
+      else
+        "#{package.name} #{constraint_string}"
+      end
     end
 
     def constraint_string
