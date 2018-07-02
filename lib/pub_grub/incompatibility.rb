@@ -1,6 +1,9 @@
 module PubGrub
   class Incompatibility
-    ConflictCause = Struct.new(:incompatibility, :satisfier)
+    ConflictCause = Struct.new(:incompatibility, :satisfier) do
+      alias_method :conflict, :incompatibility
+      alias_method :other, :satisfier
+    end
 
     attr_reader :terms, :cause
 
@@ -11,6 +14,23 @@ module PubGrub
 
     def failure?
       terms.empty? || (terms.length == 1 && terms[0].package == Package.root && terms[0].positive?)
+    end
+
+    def conflict?
+      ConflictCause === cause
+    end
+
+    # Returns all external incompatibilities in this incompatibility's
+    # derivation graph
+    def external_incompatibilities
+      if conflict?
+        [
+          cause.conflict,
+          cause.other
+        ].flat_map(&:external_incompatibilities)
+      else
+        [this]
+      end
     end
 
     def to_s
