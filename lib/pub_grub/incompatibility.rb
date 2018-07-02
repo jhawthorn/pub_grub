@@ -57,7 +57,7 @@ module PubGrub
             end
           elsif terms.all?(&:negative?)
             if terms.length == 2
-              "either #{terms[0]} or #{terms[1]}"
+              "either #{terms[0].invert} or #{terms[1].invert}"
             else
               "one of #{terms.map(&:invert).join(" or ")} must be true";
             end
