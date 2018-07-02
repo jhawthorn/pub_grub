@@ -227,9 +227,13 @@ module PubGrub
 
       solver = VersionSolver.new(source: source)
 
-      assert_raises PubGrub::SolveFailure do
+      ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
+      assert_equal <<ERR.strip,  ex.to_s.strip
+Because foo any depends on bar ~> 2.0 and bar any depends on baz ~> 3.0, foo any requires baz ~> 3.0.
+So, because root depends on foo ~> 1.0 and root depends on baz ~> 1.0, version solving has failed.
+ERR
     end
 
     ## Sixth example from pub's solver.md documentation
@@ -254,9 +258,17 @@ module PubGrub
 
       solver = VersionSolver.new(source: source)
 
-      assert_raises PubGrub::SolveFailure do
+      ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
+      assert_equal <<ERR.strip,  ex.to_s.strip
+    Because a any depends on b ~> 2.0 and foo 1.0.0 depends on b ~> 1.0, a any is incompatible with foo 1.0.0.
+(1) So, because foo 1.0.0 depends on a ~> 1.0, foo 1.0.0 is forbidden.
+
+    Because x any depends on y ~> 2.0 and foo 1.1.0 depends on y ~> 1.0, x any is incompatible with foo 1.1.0.
+    And because foo 1.1.0 depends on x ~> 1.0, foo 1.1.0 is forbidden.
+    So, because foo 1.0.0 is forbidden (1), version solving has failed.
+ERR
     end
   end
 end
