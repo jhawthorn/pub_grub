@@ -125,9 +125,11 @@ module PubGrub
       end
     end
 
-    def to_s
+    def to_s(allow_every: false)
       if package == Package.root
         "root"
+      elsif allow_every && any?
+        "every version of #{package.name}"
       else
         "#{package.name} #{constraint_string}"
       end
@@ -146,6 +148,11 @@ module PubGrub
 
     def empty?
       bitmap == 0
+    end
+
+    # Does this match every version of the package
+    def any?
+      bitmap == self.class.any(package).bitmap
     end
 
     def inspect

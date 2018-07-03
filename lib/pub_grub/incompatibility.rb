@@ -37,21 +37,21 @@ module PubGrub
       case cause
       when :dependency
         raise unless terms.length == 2
-        "#{terms[0]} depends on #{terms[1].invert}"
+        "#{terms[0].to_s(allow_every: true)} depends on #{terms[1].invert}"
       else
         if failure?
           "version solving has failed"
         elsif terms.length == 1
           term = terms[0]
           if term.positive?
-            "#{terms[0]} is forbidden"
+            "#{terms[0].to_s(allow_every: true)} is forbidden"
           else
             "#{terms[0].invert} is required"
           end
         else
           if terms.all?(&:positive?)
             if terms.length == 2
-              "#{terms[0]} is incompatible with #{terms[1]}"
+              "#{terms[0].to_s(allow_every: true)} is incompatible with #{terms[1]}"
             else
               "one of #{terms.map(&:to_s).join(" or ")} must be false"
             end
@@ -66,7 +66,7 @@ module PubGrub
             negative = terms.select(&:negative?).map(&:invert)
 
             if positive.length == 1
-              "#{positive[0]} requires #{negative.join(" or ")}"
+              "#{positive[0].to_s(allow_every: true)} requires #{negative.join(" or ")}"
             else
               "if #{positive.join(" and ")} then #{negative.join(" or ")}"
             end

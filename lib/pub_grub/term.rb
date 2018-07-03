@@ -10,9 +10,9 @@ module PubGrub
       @positive = positive
     end
 
-    def to_s
+    def to_s(allow_every: false)
       if positive
-        @constraint.to_s
+        @constraint.to_s(allow_every: allow_every)
       else
         "not #{@constraint}"
       end
