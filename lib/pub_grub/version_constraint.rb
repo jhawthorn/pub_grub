@@ -18,7 +18,7 @@ module PubGrub
     end
 
     def self.any(package)
-      new(package)
+      new(package, nil, bitmap: (1 << package.versions.count) - 1)
     end
 
     def self.bitmap_matching(package)
