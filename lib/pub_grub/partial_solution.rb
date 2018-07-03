@@ -10,7 +10,7 @@ module PubGrub
       reset!
 
       @attempted_solutions = 1
-      @backtrack = false
+      @backtracking = false
     end
 
     def decision_level
