@@ -7,7 +7,11 @@ module PubGrub
     end
 
     def to_s
-      FailureWriter.new(@incompatibility).write
+      "Could not find compatible versions\n\n#{explanation}"
+    end
+
+    def explanation
+      @explanation ||= FailureWriter.new(@incompatibility).write
     end
   end
 end
