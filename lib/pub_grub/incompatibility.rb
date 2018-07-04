@@ -102,10 +102,6 @@ module PubGrub
           acc.intersect(term)
         end
 
-        if term.empty?
-          raise "Incompatibility should not have empty terms: #{term}"
-        end
-
         term
       end
     end
