@@ -231,8 +231,12 @@ module PubGrub
         solver.solve
       end
       assert_equal <<ERR.strip,  ex.to_s.strip
-Because every version of foo depends on bar ~> 2.0 and every version of bar depends on baz ~> 3.0, every version of foo requires baz ~> 3.0.
-So, because root depends on foo ~> 1.0 and root depends on baz ~> 1.0, version solving has failed.
+Because every version of foo depends on bar ~> 2.0
+  and every version of bar depends on baz ~> 3.0,
+  every version of foo requires baz ~> 3.0.
+So, because root depends on foo ~> 1.0
+  and root depends on baz ~> 1.0,
+  version solving has failed.
 ERR
     end
 
@@ -262,12 +266,19 @@ ERR
         solver.solve
       end
       assert_equal <<ERR.strip,  ex.to_s.strip
-    Because every version of a depends on b ~> 2.0 and foo 1.0.0 depends on b ~> 1.0, every version of a is incompatible with foo 1.0.0.
-(1) So, because foo 1.0.0 depends on a ~> 1.0, foo 1.0.0 is forbidden.
+    Because every version of a depends on b ~> 2.0
+      and foo 1.0.0 depends on b ~> 1.0,
+      every version of a is incompatible with foo 1.0.0.
+(1) So, because foo 1.0.0 depends on a ~> 1.0,
+      foo 1.0.0 is forbidden.
 
-    Because every version of x depends on y ~> 2.0 and foo 1.1.0 depends on y ~> 1.0, every version of x is incompatible with foo 1.1.0.
-    And because foo 1.1.0 depends on x ~> 1.0, foo 1.1.0 is forbidden.
-    So, because foo 1.0.0 is forbidden (1), version solving has failed.
+    Because every version of x depends on y ~> 2.0
+      and foo 1.1.0 depends on y ~> 1.0,
+      every version of x is incompatible with foo 1.1.0.
+    And because foo 1.1.0 depends on x ~> 1.0,
+      foo 1.1.0 is forbidden.
+    So, because foo 1.0.0 is forbidden (1),
+      version solving has failed.
 ERR
     end
   end

@@ -25,6 +25,7 @@ module PubGrub
 
         lead = number ? "(#{number}) " : ""
         lead = lead.ljust(padding)
+        message = message.gsub("\n", "\n" + " " * (padding + 2))
         "#{lead}#{message}"
       end.join("\n")
     end
@@ -55,7 +56,7 @@ module PubGrub
         if conflict_line && other_line
           write_line(
             incompatibility,
-            "Because #{cause.conflict} (#{conflict_line}) and #{cause.other} (#{other_line}), #{incompatibility}.",
+            "Because #{cause.conflict} (#{conflict_line})\nand #{cause.other} (#{other_line}),\n#{incompatibility}.",
             numbered: numbered
           )
         elsif conflict_line || other_line
@@ -66,7 +67,7 @@ module PubGrub
           visit(without_line);
           write_line(
             incompatibility,
-            "#{conjunction} because #{with_line} (#{line}), #{incompatibility}.",
+            "#{conjunction} because #{with_line} (#{line}),\n#{incompatibility}.",
             numbered: numbered
           )
         else
@@ -90,7 +91,7 @@ module PubGrub
 
             write_line(
               incompatibility,
-              "#{conjunction} because #{cause.conflict} (#{@line_numbers[cause.conflict]}), #{incompatibility}.",
+              "#{conjunction} because #{cause.conflict} (#{@line_numbers[cause.conflict]}),\n#{incompatibility}.",
               numbered: numbered
             )
           end
@@ -103,7 +104,7 @@ module PubGrub
         if derived_line
           write_line(
             incompatibility,
-            "Because #{ext} and #{derived} (#{derived_line}), #{incompatibility}.",
+            "Because #{ext}\nand #{derived} (#{derived_line}),\n#{incompatibility}.",
             numbered: numbered
           )
         elsif collapsible?(derived)
@@ -120,21 +121,21 @@ module PubGrub
 
           write_line(
             incompatibility,
-            "#{conjunction} because #{collapsed_ext} and #{ext}, #{incompatibility}.",
+            "#{conjunction} because #{collapsed_ext}\nand #{ext},\n#{incompatibility}.",
             numbered: numbered
           )
         else
           visit(derived)
           write_line(
             incompatibility,
-            "#{conjunction} because #{ext}, #{incompatibility}.",
+            "#{conjunction} because #{ext},\n#{incompatibility}.",
             numbered: numbered
           )
         end
       else
         write_line(
           incompatibility,
-          "Because #{cause.conflict} and #{cause.other}, #{incompatibility}.",
+          "Because #{cause.conflict}\nand #{cause.other},\n#{incompatibility}.",
           numbered: numbered
         )
       end

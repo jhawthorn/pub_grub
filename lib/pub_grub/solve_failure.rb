@@ -7,7 +7,7 @@ module PubGrub
     end
 
     def to_s
-      "\n" + FailureWriter.new(@incompatibility).write
+      FailureWriter.new(@incompatibility).write
     end
   end
 end
