@@ -51,19 +51,7 @@ module PubGrub
     def incompatibilities_for(version)
       package = version.package
       @deps_by_version[version].map do |dep_package_name, dep_constraint_name|
-        bitmap = VersionConstraint.bitmap_matching(package) do |requesting_version|
-          deps = @deps_by_version[requesting_version]
-          deps && deps[dep_package_name] && deps[dep_package_name] == dep_constraint_name
-        end
-        description =
-          if (bitmap == (1 << package.versions.length) - 1)
-            "any"
-          elsif (bitmap == 1 << version.id)
-            version.name
-          else
-            "requiring #{dep_package_name} #{dep_constraint_name}"
-          end
-        self_constraint = VersionConstraint.new(package, description, bitmap: bitmap)
+        self_constraint = VersionConstraint.exact(version)
 
         dep_package = @packages[dep_package_name]
 
@@ -74,7 +62,7 @@ module PubGrub
           return [Incompatibility.new([Term.new(constraint, true)], cause: :invalid_dependency)]
         end
 
-        dep_constraint = VersionConstraint.new(dep_package, dep_constraint_name)
+        dep_constraint = VersionConstraint.parse(dep_package, dep_constraint_name)
 
         Incompatibility.new([Term.new(self_constraint, true), Term.new(dep_constraint, false)], cause: :dependency)
       end
