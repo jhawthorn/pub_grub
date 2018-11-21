@@ -88,6 +88,17 @@ module PubGrub
       "#<#{self.class} #{to_s}>"
     end
 
+    def pretty_print(q)
+      q.group 2, "#<#{self.class}", ">" do
+        q.breakable
+        q.text to_s
+
+        q.breakable
+        q.text " caused by "
+        q.pp @cause
+      end
+    end
+
     private
 
     def cleanup_terms(terms)
