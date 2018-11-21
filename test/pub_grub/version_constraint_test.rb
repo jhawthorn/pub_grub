@@ -11,7 +11,7 @@ module PubGrub
     end
 
     def test_empty_restriction
-      constraint = VersionConstraint.new(@package)
+      constraint = VersionConstraint.any(@package)
 
       assert_equal 0b111, constraint.bitmap
       assert_equal @package.versions, constraint.versions
@@ -20,7 +20,7 @@ module PubGrub
     end
 
     def test_semver_restriction
-      constraint = VersionConstraint.new(@package, "~> 1.0")
+      constraint = VersionConstraint.parse(@package, "~> 1.0")
 
       assert_equal 0b110, constraint.bitmap
       assert_equal @package.versions[1,2], constraint.versions
@@ -29,7 +29,7 @@ module PubGrub
     end
 
     def test_no_versions
-      constraint = VersionConstraint.new(@package, "> 99")
+      constraint = VersionConstraint.parse(@package, "> 99")
 
       assert_equal 0b000, constraint.bitmap
       assert_equal [], constraint.versions
@@ -38,8 +38,8 @@ module PubGrub
     end
 
     def test_intersection
-      a = VersionConstraint.new(@package, "> 1")
-      b = VersionConstraint.new(@package, "< 2")
+      a = VersionConstraint.parse(@package, "> 1")
+      b = VersionConstraint.parse(@package, "< 2")
 
       constraint = a.intersect(b)
 
@@ -51,8 +51,8 @@ module PubGrub
     end
 
     def test_no_intersection
-      a = VersionConstraint.new(@package, "<= 1")
-      b = VersionConstraint.new(@package, ">= 2")
+      a = VersionConstraint.parse(@package, "<= 1")
+      b = VersionConstraint.parse(@package, ">= 2")
 
       constraint = a.intersect(b)
 
@@ -64,7 +64,7 @@ module PubGrub
     end
 
     def test_invert_no_restriction
-      constraint = VersionConstraint.new(@package).invert
+      constraint = VersionConstraint.any(@package).invert
       assert_equal 0b000, constraint.bitmap
       assert_equal ["not >= 0"], constraint.constraint
       assert_equal [], constraint.versions
@@ -73,7 +73,7 @@ module PubGrub
     end
 
     def test_invert_single_constraint
-      constraint = VersionConstraint.new(@package, "> 1").invert
+      constraint = VersionConstraint.parse(@package, "> 1").invert
       assert_equal 0b100, constraint.bitmap
       assert_equal ["not > 1"], constraint.constraint
       assert_equal "pkg not > 1", constraint.to_s
@@ -81,7 +81,7 @@ module PubGrub
     end
 
     def test_invert_multiple_constraints
-      constraint = VersionConstraint.new(@package, ["> 1", "< 2"]).invert
+      constraint = VersionConstraint.parse(@package, ["> 1", "< 2"]).invert
       assert_equal 0b101, constraint.bitmap
       assert_equal ["not (> 1, < 2)"], constraint.constraint
       assert_equal "pkg not (> 1, < 2)", constraint.to_s
@@ -89,8 +89,8 @@ module PubGrub
     end
 
     def test_difference
-      a = VersionConstraint.new(@package, [">= 1"])
-      b = VersionConstraint.new(@package, ["~> 1"])
+      a = VersionConstraint.parse(@package, [">= 1"])
+      b = VersionConstraint.parse(@package, ["~> 1"])
 
       constraint = a.difference(b)
 
@@ -102,8 +102,8 @@ module PubGrub
 
     def test_relation_subset
       # foo ~> 1.1.0 is a subset of foo ~> 1.0
-      a = VersionConstraint.new(@package, ["~> 1.1.0"])
-      b = VersionConstraint.new(@package, ["~> 1.0"])
+      a = VersionConstraint.parse(@package, ["~> 1.1.0"])
+      b = VersionConstraint.parse(@package, ["~> 1.0"])
       assert_equal :subset, a.relation(b)
       assert a.subset?(b)
       assert a.overlap?(b)
@@ -112,8 +112,8 @@ module PubGrub
 
     def test_relation_overlap
       # foo ~> 1.0 overlaps with foo > 1.0
-      a = VersionConstraint.new(@package, ["> 1.0"])
-      b = VersionConstraint.new(@package, ["~> 1.0"])
+      a = VersionConstraint.parse(@package, ["> 1.0"])
+      b = VersionConstraint.parse(@package, ["~> 1.0"])
       assert_equal :overlap, a.relation(b)
       refute a.subset?(b)
       assert a.overlap?(b)
@@ -122,8 +122,8 @@ module PubGrub
 
     def test_relation_disjoint
       # foo ~> 1.0 is disjoint with foo ~> 2.0
-      a = VersionConstraint.new(@package, ["~> 1.0"])
-      b = VersionConstraint.new(@package, ["~> 2.0"])
+      a = VersionConstraint.parse(@package, ["~> 1.0"])
+      b = VersionConstraint.parse(@package, ["~> 2.0"])
       assert_equal :disjoint, a.relation(b)
       refute a.subset?(b)
       refute a.overlap?(b)

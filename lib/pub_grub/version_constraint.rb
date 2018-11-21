@@ -13,6 +13,10 @@ module PubGrub
     end
 
     class << self
+      def parse(package, constraint)
+        new(package, constraint)
+      end
+
       def exact(version)
         package = version.package
         new(package, version.name, bitmap: bitmap_matching(package) { |v| v == version })
