@@ -282,7 +282,7 @@ ERR
 ERR
     end
 
-    def test_invalid_package
+    def test_invalid_package_failure
       source = StaticPackageSource.new do |s|
         s.root deps: { 'foo' => '~> 1.0' }
 
@@ -299,6 +299,25 @@ Because every version of foo depends on unknown package bar
   and root depends on foo ~> 1.0,
   version solving has failed.
 ERR
+    end
+
+    def test_invalid_package_success
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'foo' => '~> 1.0' }
+
+        s.add 'foo', '1.0.1', deps: { 'baar' => '1.0.0' }
+        s.add 'foo', '1.0.0', deps: { 'bar' => '1.0.0' }
+
+        s.add 'bar', '1.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'foo' => '1.0.0',
+        'bar' => '1.0.0'
+      }
     end
   end
 end
