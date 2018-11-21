@@ -57,9 +57,8 @@ module PubGrub
 
         if !dep_package
           # no such package -> this version is invalid
-          description = "referencing invalid package #{dep_package_name.inspect}"
-          constraint = VersionConstraint.new(package, description, bitmap: bitmap)
-          return [Incompatibility.new([Term.new(constraint, true)], cause: :invalid_dependency)]
+          cause = PubGrub::Incompatibility::InvalidDependency.new(dep_package_name, dep_constraint_name)
+          return [Incompatibility.new([Term.new(self_constraint, true)], cause: cause)]
         end
 
         dep_constraint = VersionConstraint.parse(dep_package, dep_constraint_name)

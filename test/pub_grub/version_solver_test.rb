@@ -281,5 +281,24 @@ ERR
       version solving has failed.
 ERR
     end
+
+    def test_invalid_package
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'foo' => '~> 1.0' }
+
+        s.add 'foo', '1.0.0', deps: { 'bar' => '1.0.0' }
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      ex = assert_raises PubGrub::SolveFailure do
+        solver.solve
+      end
+      assert_equal <<ERR.strip,  ex.explanation.strip
+Because every version of foo depends on unknown package bar
+  and root depends on foo ~> 1.0,
+  version solving has failed.
+ERR
+    end
   end
 end

@@ -5,6 +5,9 @@ module PubGrub
       alias_method :other, :satisfier
     end
 
+    InvalidDependency = Struct.new(:package, :constraint) do
+    end
+
     attr_reader :terms, :cause
 
     def initialize(terms, cause:)
@@ -35,10 +38,14 @@ module PubGrub
 
     def to_s
       case cause
+      when :root
+        "(root dependency)"
       when :dependency
         raise unless terms.length == 2
         "#{terms[0].to_s(allow_every: true)} depends on #{terms[1].invert}"
-      else
+      when PubGrub::Incompatibility::InvalidDependency
+        "#{terms[0].to_s(allow_every: true)} depends on unknown package #{cause.package}"
+      when PubGrub::Incompatibility::ConflictCause
         if failure?
           "version solving has failed"
         elsif terms.length == 1
@@ -72,6 +79,8 @@ module PubGrub
             end
           end
         end
+      else
+        raise "unhandled cause: #{cause.inspect}"
       end
     end
 
