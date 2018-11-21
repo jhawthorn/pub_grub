@@ -12,20 +12,22 @@ module PubGrub
       @bitmap = bitmap # Calculated lazily
     end
 
-    def self.exact(version)
-      package = version.package
-      new(package, version.name, bitmap: bitmap_matching(package) { |v| v == version })
-    end
+    class << self
+      def exact(version)
+        package = version.package
+        new(package, version.name, bitmap: bitmap_matching(package) { |v| v == version })
+      end
 
-    def self.any(package)
-      new(package, nil, bitmap: (1 << package.versions.count) - 1)
-    end
+      def any(package)
+        new(package, nil, bitmap: (1 << package.versions.count) - 1)
+      end
 
-    def self.bitmap_matching(package)
-      package.versions.select do |version|
-        yield version
-      end.inject(0) do |acc, version|
-        acc | (1 << version.id)
+      def bitmap_matching(package)
+        package.versions.select do |version|
+          yield version
+        end.inject(0) do |acc, version|
+          acc | (1 << version.id)
+        end
       end
     end
 
