@@ -1,3 +1,5 @@
+require 'pub_grub/version_range'
+
 require 'rubygems/requirement'
 
 module PubGrub
