@@ -32,12 +32,16 @@ module PubGrub
     end
 
     def constraints
-      return ["any"] if !min && !max
+      return ["any"] if any?
 
       c = []
       c << "#{include_min ? ">=" : ">"} #{min}" if min
       c << "#{include_max ? "<=" : "<"} #{max}" if max
       c
+    end
+
+    def any?
+      !min && !max
     end
 
     def to_s
