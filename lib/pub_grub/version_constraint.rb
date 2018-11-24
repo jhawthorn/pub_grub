@@ -46,12 +46,12 @@ module PubGrub
         package = version.package
         ver = Gem::Version.new(version.name)
         range = VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
-        new(package, version.name, range: range, bitmap: bitmap_matching(package) { |v| v == version })
+        new(package, version.name, range: range)
       end
 
       def any(package)
         range = VersionRange.new
-        new(package, nil, range: range, bitmap: (1 << package.versions.count) - 1)
+        new(package, nil, range: range)
       end
 
       def bitmap_matching(package)
