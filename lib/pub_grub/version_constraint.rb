@@ -68,10 +68,8 @@ module PubGrub
     def bitmap
       return @bitmap if @bitmap
 
-      # TODO: Should not be hardcoded to rubygems semantics
-      requirement = Gem::Requirement.new(constraint)
       @bitmap = self.class.bitmap_matching(package) do |version|
-        requirement.satisfied_by?(Gem::Version.new(version.name))
+        range.include?(Gem::Version.new(version.name))
       end
     end
 
@@ -93,13 +91,12 @@ module PubGrub
       if bitmap == other.bitmap
         self
       else
-        self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", bitmap: bitmap | other.bitmap, range: range.union(other.range))
+        self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", range: range.union(other.range))
       end
     end
 
     def invert
       new_range = range.invert
-      new_bitmap = bitmap ^ ((1 << package.versions.length) - 1)
       new_constraint =
         if constraint.length == 0
           ["not >= 0"]
@@ -108,7 +105,7 @@ module PubGrub
         else
           ["not (#{constraint_string})"]
         end
-      self.class.new(package, new_constraint, bitmap: new_bitmap, range: new_range)
+      self.class.new(package, new_constraint, range: new_range)
     end
 
     def difference(other)
@@ -121,23 +118,12 @@ module PubGrub
       end
     end
 
-    if RUBY_VERSION >= "2.5"
-      def allows_all?(other)
-        bitmap.allbits?(other.bitmap)
-      end
+    def allows_all?(other)
+      bitmap.allbits?(other.bitmap)
+    end
 
-      def allows_any?(other)
-        bitmap.anybits?(other.bitmap)
-      end
-    else
-      def allows_all?(other)
-        other_bitmap = other.bitmap
-        (bitmap & other_bitmap) == other_bitmap
-      end
-
-      def allows_any?(other)
-        (bitmap & other.bitmap) != 0
-      end
+    def allows_any?(other)
+      range.intersects?(other.range)
     end
 
     def subset?(other)

@@ -66,6 +66,14 @@ module PubGrub
         @version = Version.new(self, 0, "1.0.0")
         @versions = [@version].freeze
       end
+
+      def <=>(other)
+        if other == self
+          0
+        else
+          raise "Can't compare #{inspect} with #{other.inspect}"
+        end
+      end
     end
 
     def self.root

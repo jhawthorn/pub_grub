@@ -48,11 +48,17 @@ module PubGrub
       attr_reader :ranges
 
       def initialize(ranges)
-        @ranges = ranges
+        @ranges = ranges.flat_map do |range|
+          if range.is_a?(Union)
+            range.ranges
+          else
+            [range]
+          end
+        end
       end
 
       def include?(version)
-        ranges.any? { |r| r.include?(other) }
+        ranges.any? { |r| r.include?(version) }
       end
 
       def intersects?(other)
@@ -209,9 +215,18 @@ module PubGrub
     end
 
     def invert
+      return self.class.empty if any?
+
       low = VersionRange.new(max: min, include_max: !include_min)
       high = VersionRange.new(min: max, include_min: !include_max)
-      low.union(high)
+
+      if !min
+        high
+      elsif !max
+        low
+      else
+        low.union(high)
+      end
     end
 
     def ==(other)
