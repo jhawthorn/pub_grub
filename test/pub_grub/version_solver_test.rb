@@ -119,15 +119,20 @@ module PubGrub
       source = StaticPackageSource.new do |s|
         s.root deps: {
           'foo' => '>= 0',
-          'bar' => '>= 0'
+          'bar' => '>= 0',
+          'baz' => '0.0.0'
         }
 
-        # This sets up a hundred versions of foo and bar, 0.0.0 through 9.9.0. Each
+        # This sets up one hundred versions of foo and bar, 0.0.0 through 9.9.0. Each
         # version of foo depends on a baz with the same major version. Each version
         # of bar depends on a baz with the same minor version. There is only one
         # version of baz, 0.0.0, so only older versions of foo and bar will
         # satisfy it.
-        s.add 'baz', '0.0.0'
+        9.downto(0) do |i|
+          9.downto(0) do |j|
+            s.add 'baz', "0.#{i}.#{j}"
+          end
+        end
         9.downto(0) do |i|
           9.downto(0) do |j|
             s.add 'foo', "#{i}.#{j}.0", deps: { 'baz' => "#{i}.0.0" }
