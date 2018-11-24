@@ -11,7 +11,7 @@ module PubGrub
     end
 
     def build_term(constraint, positive = true)
-      constraint = VersionConstraint.new(@package, constraint)
+      constraint = VersionConstraint.parse(@package, constraint)
       Term.new(constraint, positive)
     end
 
