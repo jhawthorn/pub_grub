@@ -13,6 +13,9 @@ module PubGrub
     def test_empty_restriction
       constraint = VersionConstraint.any(@package)
 
+      assert constraint.any?
+      refute constraint.empty?
+
       assert_equal 0b111, constraint.bitmap
       assert_equal @package.versions, constraint.versions
       assert_equal "pkg >= 0", constraint.to_s

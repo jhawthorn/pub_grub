@@ -114,7 +114,7 @@ module PubGrub
 
     def versions
       package.versions.select do |version|
-        bitmap[version.id] == 1
+        range.include?(Gem::Version.new(version.name))
       end
     end
 
@@ -175,7 +175,7 @@ module PubGrub
 
     # Does this match every version of the package
     def any?
-      bitmap == self.class.any(package).bitmap
+      range.any?
     end
 
     def inspect
