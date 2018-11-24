@@ -8,24 +8,50 @@ module PubGrub
 
     # @param package [PubGrub::Package]
     # @param constraint [String]
-    def initialize(package, constraint = nil, bitmap: nil)
+    def initialize(package, constraint = nil, ranges: nil, bitmap: nil)
       @package = package
       @constraint = Array(constraint)
+      @ranges = ranges
       @bitmap = bitmap # Calculated lazily
     end
 
     class << self
       def parse(package, constraint)
+        # TODO: Should not be hardcoded to rubygems semantics
+        requirement = Gem::Requirement.new(constraint)
+        ranges = requirement.requirements.map do |(op, ver)|
+          case op
+          when "~>"
+            # TODO: not sure this is correct for prereleases
+            VersionRange.new(min: ver, max: ver.bump, include_min: true)
+          when ">"
+            VersionRange.new(min: ver)
+          when ">="
+            VersionRange.new(min: ver, include_min: true)
+          when "<"
+            VersionRange.new(max: ver)
+          when "<="
+            VersionRange.new(max: ver, include_max: true)
+          when "="
+            VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
+          else
+            raise "bad version specifier: #{op}"
+          end
+        end
+
         new(package, constraint)
       end
 
       def exact(version)
         package = version.package
-        new(package, version.name, bitmap: bitmap_matching(package) { |v| v == version })
+        ver = Gem::Version.new(version.name)
+        range = VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
+        new(package, version.name, ranges: [range], bitmap: bitmap_matching(package) { |v| v == version })
       end
 
       def any(package)
-        new(package, nil, bitmap: (1 << package.versions.count) - 1)
+        range = VersionRange.new
+        new(package, nil, ranges: [range], bitmap: (1 << package.versions.count) - 1)
       end
 
       def bitmap_matching(package)

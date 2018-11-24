@@ -44,6 +44,10 @@ module PubGrub
       Empty.new
     end
 
+    def self.any
+      new
+    end
+
     def initialize(min: nil, max: nil, include_min: false, include_max: false)
       @min = min
       @max = max
@@ -140,6 +144,7 @@ module PubGrub
 
     def constraints
       return ["any"] if any?
+      return ["= #{min}"] if min == max
 
       c = []
       c << "#{include_min ? ">=" : ">"} #{min}" if min

@@ -3,7 +3,7 @@ require 'pub_grub/version_range'
 module PubGrub
   class VersionRangeTest < Minitest::Test
     def test_no_restriction
-      range = VersionRange.new
+      range = VersionRange.any
 
       assert_equal "any", range.to_s
     end
