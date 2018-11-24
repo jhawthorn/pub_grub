@@ -44,6 +44,32 @@ module PubGrub
       Empty.new
     end
 
+    class Union
+      attr_reader :ranges
+
+      def initialize(ranges)
+        @ranges = ranges
+      end
+
+      def include?(version)
+        ranges.any? { |r| r.include?(other) }
+      end
+
+      def intersects?(other)
+        ranges.any? { |r| r.intersects?(other) }
+      end
+
+      def intersect(other)
+        new_ranges = ranges.map{ |r| r.intersect(other) }
+        new_ranges.reject!(&:empty?)
+        if new_ranges.empty?
+          VersionRange.empty
+        else
+          self.class.new(new_ranges)
+        end
+      end
+    end
+
     def self.any
       new
     end

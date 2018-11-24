@@ -8,10 +8,10 @@ module PubGrub
 
     # @param package [PubGrub::Package]
     # @param constraint [String]
-    def initialize(package, constraint = nil, ranges: nil, bitmap: nil)
+    def initialize(package, constraint = nil, range: nil, bitmap: nil)
       @package = package
       @constraint = Array(constraint)
-      @ranges = ranges
+      @range = range
       @bitmap = bitmap # Calculated lazily
     end
 
@@ -39,19 +39,19 @@ module PubGrub
           end
         end
 
-        new(package, constraint)
+        new(package, constraint, range: ranges.inject(&:intersect))
       end
 
       def exact(version)
         package = version.package
         ver = Gem::Version.new(version.name)
         range = VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
-        new(package, version.name, ranges: [range], bitmap: bitmap_matching(package) { |v| v == version })
+        new(package, version.name, range: range, bitmap: bitmap_matching(package) { |v| v == version })
       end
 
       def any(package)
         range = VersionRange.new
-        new(package, nil, ranges: [range], bitmap: (1 << package.versions.count) - 1)
+        new(package, nil, range: range, bitmap: (1 << package.versions.count) - 1)
       end
 
       def bitmap_matching(package)
