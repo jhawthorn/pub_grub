@@ -31,6 +31,26 @@ module PubGrub
       true
     end
 
+    def strictly_lower?(other)
+      if !max || !other.min
+        false
+      elsif max == other.min
+        !include_max || !other.include_min
+      elsif max > other.min
+        false
+      else # max < other.min
+        true
+      end
+    end
+
+    def strictly_higher?(other)
+      other.strictly_lower?(self)
+    end
+
+    def intersects?(other)
+      !strictly_lower?(other) && !strictly_higher?(other)
+    end
+
     def constraints
       return ["any"] if any?
 

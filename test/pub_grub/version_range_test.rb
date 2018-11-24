@@ -112,5 +112,21 @@ module PubGrub
       assert_includes range, 7
       refute_includes range, 8
     end
+
+    def test_intersection
+      a = VersionRange.new(min: 1, max: 5)
+      b = VersionRange.new(min: 4, max: 7)
+
+      assert a.intersects?(b)
+      assert b.intersects?(a)
+    end
+
+    def test_no_intersection
+      a = VersionRange.new(min: 1, max: 4)
+      b = VersionRange.new(min: 4, max: 7)
+
+      refute a.intersects?(b)
+      refute b.intersects?(a)
+    end
   end
 end
