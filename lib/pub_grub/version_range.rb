@@ -59,6 +59,10 @@ module PubGrub
         ranges.any? { |r| r.intersects?(other) }
       end
 
+      def empty?
+        ranges.all?(&:empty?)
+      end
+
       def intersect(other)
         new_ranges = ranges.map{ |r| r.intersect(other) }
         new_ranges.reject!(&:empty?)
@@ -67,6 +71,10 @@ module PubGrub
         else
           self.class.new(new_ranges)
         end
+      end
+
+      def invert
+        ranges.map(&:invert).inject(:intersect)
       end
     end
 
@@ -122,11 +130,13 @@ module PubGrub
 
     def intersects?(other)
       return false if other.empty?
+      return other.intersects?(self) if other.is_a?(Union)
       !strictly_lower?(other) && !strictly_higher?(other)
     end
 
     def intersect(other)
       return self.class.empty unless intersects?(other)
+      return other.intersect(self) if other.is_a?(Union)
 
       min_range =
         if !min
@@ -168,6 +178,10 @@ module PubGrub
       )
     end
 
+    def union(other)
+      Union.new([self, other])
+    end
+
     def constraints
       return ["any"] if any?
       return ["= #{min}"] if min == max
@@ -192,6 +206,12 @@ module PubGrub
 
     def inspect
       "#<#{self.class} #{to_s}>"
+    end
+
+    def invert
+      low = VersionRange.new(max: min, include_max: !include_min)
+      high = VersionRange.new(min: max, include_min: !include_max)
+      low.union(high)
     end
 
     def ==(other)

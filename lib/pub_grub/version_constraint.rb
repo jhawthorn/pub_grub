@@ -4,7 +4,7 @@ require 'rubygems/requirement'
 
 module PubGrub
   class VersionConstraint
-    attr_reader :package, :constraint
+    attr_reader :package, :constraint, :range
 
     # @param package [PubGrub::Package]
     # @param constraint [String]
@@ -34,6 +34,8 @@ module PubGrub
             VersionRange.new(max: ver, include_max: true)
           when "="
             VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
+          when "!="
+            VersionRange.new(min: ver, max: ver, include_min: true, include_max: true).invert
           else
             raise "bad version specifier: #{op}"
           end
@@ -80,7 +82,7 @@ module PubGrub
       if bitmap == other.bitmap
         self
       else
-        self.class.new(package, constraint + other.constraint, bitmap: bitmap & other.bitmap)
+        self.class.new(package, constraint + other.constraint, bitmap: bitmap & other.bitmap, range: range.intersect(other.range))
       end
     end
 
@@ -91,11 +93,12 @@ module PubGrub
       if bitmap == other.bitmap
         self
       else
-        self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", bitmap: bitmap | other.bitmap)
+        self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", bitmap: bitmap | other.bitmap, range: range.union(other.range))
       end
     end
 
     def invert
+      new_range = range.invert
       new_bitmap = bitmap ^ ((1 << package.versions.length) - 1)
       new_constraint =
         if constraint.length == 0
@@ -105,7 +108,7 @@ module PubGrub
         else
           ["not (#{constraint_string})"]
         end
-      self.class.new(package, new_constraint, bitmap: new_bitmap)
+      self.class.new(package, new_constraint, bitmap: new_bitmap, range: new_range)
     end
 
     def difference(other)
