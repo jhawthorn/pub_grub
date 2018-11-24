@@ -4,8 +4,13 @@ module PubGrub
   class VersionRange
     attr_reader :min, :max, :include_min, :include_max
 
+    alias_method :include_min?, :include_min
+    alias_method :include_max?, :include_max
+
     class Empty < VersionRange
-      undef_method :min, :max, :include_min, :include_max
+      undef_method :min, :max
+      undef_method :include_min, :include_min?
+      undef_method :include_max, :include_max?
 
       def initialize
       end
@@ -91,11 +96,46 @@ module PubGrub
     end
 
     def intersect(other)
-      if intersects?(other)
-        self
-      else
-        self.class.empty
-      end
+      return self.class.empty unless intersects?(other)
+
+      min_range =
+        if !min
+          other
+        elsif !other.min
+          self
+        else
+          case min <=> other.min
+          when 0
+            include_min ? other : self
+          when -1
+            other
+          when 1
+            self
+          end
+        end
+
+      max_range =
+        if !max
+          other
+        elsif !other.max
+          self
+        else
+          case max <=> other.max
+          when 0
+            include_max ? other : self
+          when -1
+            self
+          when 1
+            other
+          end
+        end
+
+      self.class.new(
+        min: min_range.min,
+        include_min: min_range.include_min,
+        max: max_range.max,
+        include_max: max_range.include_max
+      )
     end
 
     def constraints
@@ -128,7 +168,7 @@ module PubGrub
         min == other.min &&
         max == other.max &&
         include_min == other.include_min &&
-        include_max
+        include_max == other.include_max
     end
   end
 end

@@ -117,8 +117,49 @@ module PubGrub
       a = VersionRange.new(min: 1, max: 5)
       b = VersionRange.new(min: 4, max: 7)
 
+      assert a.intersects?(a)
+      assert b.intersects?(b)
+
       assert a.intersects?(b)
       assert b.intersects?(a)
+
+      assert_equal a, a.intersect(a)
+      assert_equal b, b.intersect(b)
+
+      assert_equal a.intersect(b), VersionRange.new(min: 4, max: 5)
+    end
+
+    def test_intersection_includes
+      a = VersionRange.new(min: 1, max: 5, include_max: true)
+      b = VersionRange.new(min: 4, max: 7, include_min: true)
+
+      assert a.intersects?(a)
+      assert b.intersects?(b)
+
+      assert a.intersects?(b)
+      assert b.intersects?(a)
+
+      assert_equal a, a.intersect(a)
+      assert_equal b, b.intersect(b)
+
+      assert_equal a.intersect(b), VersionRange.new(min: 4, max: 5, include_min: true, include_max: true)
+    end
+
+    def test_intersection_unbound
+      a = VersionRange.new(min: 4)
+      b = VersionRange.new(max: 7)
+
+      assert a.intersects?(a)
+      assert b.intersects?(b)
+
+      assert a.intersects?(b)
+      assert b.intersects?(a)
+
+      assert_equal a, a.intersect(a)
+      assert_equal b, b.intersect(b)
+
+      assert_equal VersionRange.new(min: 4, max: 7), a.intersect(b)
+      assert_equal VersionRange.new(min: 4, max: 7), a.intersect(b)
     end
 
     def test_no_intersection
@@ -129,6 +170,7 @@ module PubGrub
       refute b.intersects?(a)
 
       assert_equal a.intersect(b), VersionRange.empty
+      assert_equal b.intersect(a), VersionRange.empty
     end
 
     def test_empty
