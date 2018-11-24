@@ -127,6 +127,29 @@ module PubGrub
 
       refute a.intersects?(b)
       refute b.intersects?(a)
+
+      assert_equal a.intersect(b), VersionRange.empty
+    end
+
+    def test_empty
+      empty = VersionRange.empty
+      a = VersionRange.new(min: 1, max: 4)
+
+      assert_equal VersionRange.empty, empty
+
+      refute_includes empty, 0
+      refute_includes empty, 1
+      refute_includes empty, 2
+      refute_includes empty, 9999
+      refute_includes empty, -9999
+
+      refute empty.intersects?(empty)
+      refute a.intersects?(empty)
+      refute empty.intersects?(a)
+
+      assert_equal empty, empty.intersect(empty)
+      assert_equal empty, a.intersect(empty)
+      assert_equal empty, empty.intersect(a)
     end
   end
 end
