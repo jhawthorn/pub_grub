@@ -77,22 +77,16 @@ module PubGrub
       unless package == other.package
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
-      if bitmap == other.bitmap
-        self
-      else
-        self.class.new(package, constraint + other.constraint, bitmap: bitmap & other.bitmap, range: range.intersect(other.range))
-      end
+
+      self.class.new(package, constraint + other.constraint, range: range.intersect(other.range))
     end
 
     def union(other)
       unless package == other.package
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
-      if bitmap == other.bitmap
-        self
-      else
-        self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", range: range.union(other.range))
-      end
+
+      self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", range: range.union(other.range))
     end
 
     def invert
