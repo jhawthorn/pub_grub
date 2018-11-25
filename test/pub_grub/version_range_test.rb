@@ -192,6 +192,9 @@ module PubGrub
       assert_equal empty, empty.intersect(empty)
       assert_equal empty, a.intersect(empty)
       assert_equal empty, empty.intersect(a)
+
+      assert_equal VersionRange.any, empty.invert
+      assert_equal empty, VersionRange.any.invert
     end
 
     def test_contiguous_to
