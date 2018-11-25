@@ -27,7 +27,11 @@ module PubGrub
           when ">"
             VersionRange.new(min: ver)
           when ">="
-            VersionRange.new(min: ver, include_min: true)
+            if ver == Gem::Version.new("0")
+              VersionRange.any
+            else
+              VersionRange.new(min: ver, include_min: true)
+            end
           when "<"
             VersionRange.new(max: ver)
           when "<="
