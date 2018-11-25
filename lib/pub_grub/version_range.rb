@@ -348,7 +348,12 @@ module PubGrub
 
     def constraints
       return ["any"] if any?
-      return ["= #{min}"] if min == max
+      return ["#{min}"] if min == max
+
+      # FIXME: remove this
+      if min && max && include_min && !include_max && min.respond_to?(:bump) && min.bump == max
+        return ["~> #{min}"]
+      end
 
       c = []
       c << "#{include_min ? ">=" : ">"} #{min}" if min
