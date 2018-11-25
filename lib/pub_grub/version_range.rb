@@ -79,6 +79,7 @@ module PubGrub
       end
 
       def initialize(ranges)
+        raise ArgumentError unless ranges.all? { |r| r.instance_of?(VersionRange) }
         @ranges = ranges
       end
 
@@ -92,17 +93,16 @@ module PubGrub
       alias_method :allows_any?, :intersects?
 
       def empty?
-        ranges.all?(&:empty?)
+        false
+      end
+
+      def any?
+        false
       end
 
       def intersect(other)
         new_ranges = ranges.map{ |r| r.intersect(other) }
-        new_ranges.reject!(&:empty?)
-        if new_ranges.empty?
-          VersionRange.empty
-        else
-          self.class.new(new_ranges)
-        end
+        Union.union(new_ranges)
       end
 
       def invert
