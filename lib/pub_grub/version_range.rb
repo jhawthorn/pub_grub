@@ -154,13 +154,23 @@ module PubGrub
 
     def include?(version)
       if min
-        return false if version < min
-        return false if !include_min && version == min
+        case version <=> min
+        when -1
+          return false
+        when 0
+          return false if !include_min
+        when 1
+        end
       end
 
       if max
-        return false if version > max
-        return false if !include_max && version == max
+        case version <=> max
+        when -1
+        when 0
+          return false if !include_max
+        when 1
+          return false
+        end
       end
 
       true
