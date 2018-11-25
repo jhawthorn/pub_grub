@@ -4,13 +4,12 @@ require 'rubygems/requirement'
 
 module PubGrub
   class VersionConstraint
-    attr_reader :package, :constraint, :range
+    attr_reader :package, :range
 
     # @param package [PubGrub::Package]
     # @param constraint [String]
     def initialize(package, constraint = nil, range: nil)
       @package = package
-      @constraint = Array(constraint)
       @range = range
     end
 
@@ -44,7 +43,7 @@ module PubGrub
           end
         end
 
-        new(package, constraint, range: ranges.inject(&:intersect))
+        new(package, nil, range: ranges.inject(&:intersect))
       end
 
       def exact(version)
@@ -65,7 +64,7 @@ module PubGrub
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
 
-      self.class.new(package, constraint + other.constraint, range: range.intersect(other.range))
+      self.class.new(package, nil, range: range.intersect(other.range))
     end
 
     def union(other)
@@ -73,20 +72,12 @@ module PubGrub
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
 
-      self.class.new(package, "#{constraint_string} OR #{other.constraint_string}", range: range.union(other.range))
+      self.class.new(package, nil, range: range.union(other.range))
     end
 
     def invert
       new_range = range.invert
-      new_constraint =
-        if constraint.length == 0
-          ["not >= 0"]
-        elsif constraint.length == 1
-          ["not #{constraint[0]}"]
-        else
-          ["not (#{constraint_string})"]
-        end
-      self.class.new(package, new_constraint, range: new_range)
+      self.class.new(package, nil, range: new_range)
     end
 
     def difference(other)
