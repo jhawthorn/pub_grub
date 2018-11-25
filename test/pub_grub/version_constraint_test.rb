@@ -16,7 +16,6 @@ module PubGrub
       assert constraint.any?
       refute constraint.empty?
 
-      assert_equal 0b111, constraint.bitmap
       assert_equal @package.versions, constraint.versions
       assert_equal "pkg >= 0", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg >= 0>", constraint.inspect
@@ -25,7 +24,6 @@ module PubGrub
     def test_semver_restriction
       constraint = VersionConstraint.parse(@package, "~> 1.0")
 
-      assert_equal 0b110, constraint.bitmap
       assert_equal @package.versions[1,2], constraint.versions
       assert_equal "pkg ~> 1.0", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg ~> 1.0>", constraint.inspect
@@ -34,7 +32,6 @@ module PubGrub
     def test_no_versions
       constraint = VersionConstraint.parse(@package, "> 99")
 
-      assert_equal 0b000, constraint.bitmap
       assert_equal [], constraint.versions
       assert_equal "pkg > 99", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg > 99>", constraint.inspect
@@ -46,7 +43,6 @@ module PubGrub
 
       constraint = a.intersect(b)
 
-      assert_equal 0b010, constraint.bitmap
       assert_equal ["> 1", "< 2"], constraint.constraint
       assert_equal [@package.versions[1]], constraint.versions
       assert_equal "pkg > 1, < 2", constraint.to_s
@@ -59,7 +55,6 @@ module PubGrub
 
       constraint = a.intersect(b)
 
-      assert_equal 0b000, constraint.bitmap
       assert_equal ["<= 1", ">= 2"], constraint.constraint
       assert_equal [], constraint.versions
       assert_equal "pkg <= 1, >= 2", constraint.to_s
@@ -68,7 +63,6 @@ module PubGrub
 
     def test_invert_no_restriction
       constraint = VersionConstraint.any(@package).invert
-      assert_equal 0b000, constraint.bitmap
       assert_equal ["not >= 0"], constraint.constraint
       assert_equal [], constraint.versions
       assert_equal "pkg not >= 0", constraint.to_s
@@ -77,7 +71,6 @@ module PubGrub
 
     def test_invert_single_constraint
       constraint = VersionConstraint.parse(@package, "> 1").invert
-      assert_equal 0b100, constraint.bitmap
       assert_equal ["not > 1"], constraint.constraint
       assert_equal "pkg not > 1", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg not > 1>", constraint.inspect
@@ -85,7 +78,6 @@ module PubGrub
 
     def test_invert_multiple_constraints
       constraint = VersionConstraint.parse(@package, ["> 1", "< 2"]).invert
-      assert_equal 0b101, constraint.bitmap
       assert_equal ["not (> 1, < 2)"], constraint.constraint
       assert_equal "pkg not (> 1, < 2)", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg not (> 1, < 2)>", constraint.inspect
@@ -97,7 +89,6 @@ module PubGrub
 
       constraint = a.difference(b)
 
-      assert_equal 0b001, constraint.bitmap
       assert_equal [">= 1", "not ~> 1"], constraint.constraint
       assert_equal "pkg >= 1, not ~> 1", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg >= 1, not ~> 1>", constraint.inspect
