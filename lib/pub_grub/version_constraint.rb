@@ -168,7 +168,8 @@ module PubGrub
     end
 
     def empty?
-      bitmap == 0
+      # FIXME: this should probably be range.empty?
+      versions.empty?
     end
 
     # Does this match every version of the package
