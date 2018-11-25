@@ -55,7 +55,36 @@ module PubGrub
           if package.versions == [version]
             VersionConstraint.any(package)
           else
-            VersionConstraint.exact(version)
+            sorted_versions = package.versions.sort_by { |v| Gem::Version.new(v.name) }
+            low = high = sorted_versions.index(version)
+
+            # find version low such that all >= low share the same dep
+            while low > 0 &&
+                @deps_by_version[sorted_versions[low - 1]][dep_package_name] == dep_constraint_name
+              low -= 1
+            end
+            low =
+              if low == 0
+                nil
+              else
+                Gem::Version.new(sorted_versions[low].name)
+              end
+
+            # find version high such that all < high share the same dep
+            while high < sorted_versions.length &&
+                @deps_by_version[sorted_versions[high]][dep_package_name] == dep_constraint_name
+              high += 1
+            end
+            high =
+              if high == sorted_versions.length
+                nil
+              else
+                Gem::Version.new(sorted_versions[high].name)
+              end
+
+            range = VersionRange.new(min: low, max: high, include_min: true)
+
+            VersionConstraint.new(package, range: range)
           end
 
         dep_package = @packages[dep_package_name]

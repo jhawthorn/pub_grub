@@ -267,20 +267,17 @@ ERR
       end
       assert_equal <<ERR.strip,  ex.explanation.strip
     Because every version of a depends on b ~> 2.0
-      and foo 1.0.0 depends on b ~> 1.0,
-      every version of a is incompatible with foo 1.0.0.
-(1) So, because foo 1.0.0 depends on a ~> 1.0
-      and no versions satisfy foo > 1.0.0, < 1.1.0 OR > 1.1.0, < 2,
-      foo ~> 1.0.0 OR > 1.1.0, < 2 is forbidden.
+      and foo < 1.1.0 depends on b ~> 1.0,
+      every version of a is incompatible with foo < 1.1.0.
+(1) So, because foo < 1.1.0 depends on a ~> 1.0,
+      foo < 1.1.0 is forbidden.
 
     Because every version of x depends on y ~> 2.0
-      and foo 1.1.0 depends on y ~> 1.0,
-      every version of x is incompatible with foo 1.1.0.
-    And because foo 1.1.0 depends on x ~> 1.0,
-      foo 1.1.0 is forbidden.
-    And because foo ~> 1.0.0 OR > 1.1.0, < 2 is forbidden (1),
-      foo >= 1.0.0, < 2 is forbidden.
-    So, because root depends on foo ~> 1.0,
+      and foo >= 1.1.0 depends on y ~> 1.0,
+      every version of x is incompatible with foo >= 1.1.0.
+    And because foo >= 1.1.0 depends on x ~> 1.0,
+      foo >= 1.1.0 is forbidden.
+    So, because foo < 1.1.0 is forbidden (1),
       version solving has failed.
 ERR
     end
