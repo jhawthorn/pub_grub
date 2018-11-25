@@ -89,6 +89,7 @@ module PubGrub
       def intersects?(other)
         ranges.any? { |r| r.intersects?(other) }
       end
+      alias_method :allows_any?, :intersects?
 
       def empty?
         ranges.all?(&:empty?)
@@ -168,6 +169,7 @@ module PubGrub
       return other.intersects?(self) if other.is_a?(Union)
       !strictly_lower?(other) && !strictly_higher?(other)
     end
+    alias_method :allows_any?, :intersects?
 
     def intersect(other)
       return self.class.empty unless intersects?(other)
