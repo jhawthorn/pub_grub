@@ -7,8 +7,8 @@ module PubGrub
     attr_reader :package, :range
 
     # @param package [PubGrub::Package]
-    # @param constraint [String]
-    def initialize(package, constraint = nil, range: nil)
+    # @param range [PubGrub::VersionRange]
+    def initialize(package, range: nil)
       @package = package
       @range = range
     end
@@ -43,19 +43,19 @@ module PubGrub
           end
         end
 
-        new(package, nil, range: ranges.inject(&:intersect))
+        new(package, range: ranges.inject(&:intersect))
       end
 
       def exact(version)
         package = version.package
         ver = Gem::Version.new(version.name)
         range = VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
-        new(package, version.name, range: range)
+        new(package, range: range)
       end
 
       def any(package)
         range = VersionRange.new
-        new(package, nil, range: range)
+        new(package, range: range)
       end
     end
 
@@ -64,7 +64,7 @@ module PubGrub
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
 
-      self.class.new(package, nil, range: range.intersect(other.range))
+      self.class.new(package, range: range.intersect(other.range))
     end
 
     def union(other)
@@ -72,12 +72,12 @@ module PubGrub
         raise ArgumentError, "Can only intersect between VersionConstraint of the same package"
       end
 
-      self.class.new(package, nil, range: range.union(other.range))
+      self.class.new(package, range: range.union(other.range))
     end
 
     def invert
       new_range = range.invert
-      self.class.new(package, nil, range: new_range)
+      self.class.new(package, range: new_range)
     end
 
     def difference(other)
