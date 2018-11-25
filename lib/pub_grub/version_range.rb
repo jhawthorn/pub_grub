@@ -58,7 +58,24 @@ module PubGrub
 
         ranges.reject!(&:empty?)
 
-        new(ranges)
+        mins, ranges = ranges.partition { |r| !r.min }
+        original_ranges = mins + ranges.sort_by(&:min)
+        ranges = [original_ranges.shift]
+        original_ranges.each do |range|
+          if ranges.last.contiguous_to?(range)
+            ranges << ranges.pop.span(range)
+          else
+            ranges << range
+          end
+        end
+
+        if ranges.size == 0
+          VersionRange.empty
+        elsif ranges.size == 1
+          ranges[0]
+        else
+          new(ranges)
+        end
       end
 
       def initialize(ranges)
@@ -89,6 +106,10 @@ module PubGrub
 
       def invert
         ranges.map(&:invert).inject(:intersect)
+      end
+
+      def union(other)
+        Union.union([self, other])
       end
     end
 
@@ -192,8 +213,61 @@ module PubGrub
       )
     end
 
+    # The span covered by two ranges
+    #
+    # If self and other are contiguous, this builds a union of the two ranges.
+    # (if they aren't you are probably calling the wrong method)
+    def span(other)
+      return self if other.empty?
+
+      min_range =
+        if !min
+          self
+        elsif !other.min
+          other
+        else
+          case min <=> other.min
+          when 0
+            include_min ? self : other
+          when -1
+            self
+          when 1
+            other
+          end
+        end
+
+      max_range =
+        if !max
+          self
+        elsif !other.max
+          other
+        else
+          case max <=> other.max
+          when 0
+            include_max ? self : other
+          when -1
+            other
+          when 1
+            self
+          end
+        end
+
+      self.class.new(
+        min: min_range.min,
+        include_min: min_range.include_min,
+        max: max_range.max,
+        include_max: max_range.include_max
+      )
+    end
+
     def union(other)
-      Union.union([self, other])
+      return other.union(self) if other.is_a?(Union)
+
+      if contiguous_to?(other)
+        span(other)
+      else
+        Union.union([self, other])
+      end
     end
 
     def contiguous_to?(other)
