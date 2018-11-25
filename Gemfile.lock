@@ -8,6 +8,7 @@ GEM
   specs:
     minitest (5.11.3)
     rake (10.5.0)
+    stackprof (0.2.12)
 
 PLATFORMS
   ruby
@@ -17,6 +18,7 @@ DEPENDENCIES
   minitest (~> 5.0)
   pub_grub!
   rake (~> 10.0)
+  stackprof (~> 0.2.12)
 
 BUNDLED WITH
    1.16.1
