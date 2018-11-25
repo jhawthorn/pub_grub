@@ -88,7 +88,7 @@ module PubGrub
       end
 
       def include?(version)
-        ranges.any? { |r| r.include?(version) }
+        !!ranges.bsearch {|r| r.compare_version(version) }
       end
 
       def intersects?(other)
@@ -153,12 +153,16 @@ module PubGrub
     end
 
     def include?(version)
+      compare_version(version) == 0
+    end
+
+    def compare_version(version)
       if min
         case version <=> min
         when -1
-          return false
+          return -1
         when 0
-          return false if !include_min
+          return -1 if !include_min
         when 1
         end
       end
@@ -167,13 +171,13 @@ module PubGrub
         case version <=> max
         when -1
         when 0
-          return false if !include_max
+          return 1 if !include_max
         when 1
-          return false
+          return 1
         end
       end
 
-      true
+      0
     end
 
     def strictly_lower?(other)
