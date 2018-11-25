@@ -42,6 +42,10 @@ module PubGrub
       def ==(other)
         other.class == self.class
       end
+
+      def invert
+        VersionRange.any
+      end
     end
 
     def self.empty
