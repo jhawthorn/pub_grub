@@ -177,7 +177,7 @@ module PubGrub
     end
 
     def inspect
-      "#<#{self.class} #{self} (#{bitmap.to_s(2).rjust(package.versions.count, "0")})>"
+      "#<#{self.class} #{self}>"
     end
   end
 end
