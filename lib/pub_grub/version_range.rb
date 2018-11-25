@@ -52,101 +52,6 @@ module PubGrub
       Empty.new
     end
 
-    class Union
-      attr_reader :ranges
-
-      def self.normalize_ranges(ranges)
-        ranges = ranges.flat_map do |range|
-          if range.is_a?(Union)
-            range.ranges
-          else
-            [range]
-          end
-        end
-
-        ranges.reject!(&:empty?)
-
-        mins, ranges = ranges.partition { |r| !r.min }
-        original_ranges = mins + ranges.sort_by { |r| [r.include_min ? 0 : 1, r.min] }
-        ranges = [original_ranges.shift]
-        original_ranges.each do |range|
-          if ranges.last.contiguous_to?(range)
-            ranges << ranges.pop.span(range)
-          else
-            ranges << range
-          end
-        end
-
-        ranges
-      end
-
-      def self.union(ranges)
-        ranges = normalize_ranges(ranges)
-
-        if ranges.size == 0
-          VersionRange.empty
-        elsif ranges.size == 1
-          ranges[0]
-        else
-          new(ranges)
-        end
-      end
-
-      def initialize(ranges)
-        raise ArgumentError unless ranges.all? { |r| r.instance_of?(VersionRange) }
-        @ranges = ranges
-      end
-
-      def include?(version)
-        !!ranges.bsearch {|r| r.compare_version(version) }
-      end
-
-      def intersects?(other)
-        ranges.any? { |r| r.intersects?(other) }
-      end
-      alias_method :allows_any?, :intersects?
-
-      def allows_all?(other)
-        other_ranges =
-          if other.is_a?(Union)
-            other.ranges
-          else
-            [other]
-          end
-
-        other_ranges.all? do |other_range|
-          ranges.any? do |range|
-            range.allows_all?(other_range)
-          end
-        end
-      end
-
-      def empty?
-        false
-      end
-
-      def any?
-        false
-      end
-
-      def intersect(other)
-        new_ranges = ranges.map{ |r| r.intersect(other) }
-        Union.union(new_ranges)
-      end
-
-      def invert
-        ranges.map(&:invert).inject(:intersect)
-      end
-
-      def union(other)
-        Union.union([self, other])
-      end
-
-      def to_s
-        ranges.map(&:to_s).join(" OR ")
-      end
-    end
-
     def self.any
       new
     end
@@ -213,14 +118,14 @@ module PubGrub
 
     def intersects?(other)
       return false if other.empty?
-      return other.intersects?(self) if other.is_a?(Union)
+      return other.intersects?(self) if other.is_a?(VersionUnion)
       !strictly_lower?(other) && !strictly_higher?(other)
     end
     alias_method :allows_any?, :intersects?
 
     def intersect(other)
       return self.class.empty unless intersects?(other)
-      return other.intersect(self) if other.is_a?(Union)
+      return other.intersect(self) if other.is_a?(VersionUnion)
 
       min_range =
         if !min
@@ -310,12 +215,12 @@ module PubGrub
     end
 
     def union(other)
-      return other.union(self) if other.is_a?(Union)
+      return other.union(self) if other.is_a?(VersionUnion)
 
       if contiguous_to?(other)
         span(other)
       else
-        Union.union([self, other])
+        VersionUnion.union([self, other])
       end
     end
 
@@ -330,7 +235,7 @@ module PubGrub
     def allows_all?(other)
       return true if other.empty?
 
-      if other.is_a?(Union)
+      if other.is_a?(VersionUnion)
         return other.ranges.all? { |r| allows_all?(r) }
       end
 
