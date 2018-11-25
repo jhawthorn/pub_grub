@@ -140,13 +140,10 @@ module PubGrub
     end
 
     def constraint_string
-      case constraint.length
-      when 0
+      if any?
         ">= 0"
-      when 1
-        "#{constraint[0]}"
       else
-        "#{constraint.join(", ")}"
+        range.to_s
       end
     end
 

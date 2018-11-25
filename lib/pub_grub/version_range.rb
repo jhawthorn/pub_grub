@@ -131,6 +131,10 @@ module PubGrub
       def union(other)
         Union.union([self, other])
       end
+
+      def to_s
+        ranges.map(&:to_s).join(" OR ")
+      end
     end
 
     def self.any

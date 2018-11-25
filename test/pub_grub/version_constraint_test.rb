@@ -55,27 +55,27 @@ module PubGrub
       constraint = a.intersect(b)
 
       assert_equal [], constraint.versions
-      assert_equal "pkg <= 1, >= 2", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg <= 1, >= 2>", constraint.inspect
+      assert_equal "pkg (no versions)", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg (no versions)>", constraint.inspect
     end
 
     def test_invert_no_restriction
       constraint = VersionConstraint.any(@package).invert
       assert_equal [], constraint.versions
-      assert_equal "pkg not >= 0", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg not >= 0>", constraint.inspect
+      assert_equal "pkg (no versions)", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg (no versions)>", constraint.inspect
     end
 
     def test_invert_single_constraint
       constraint = VersionConstraint.parse(@package, "> 1").invert
-      assert_equal "pkg not > 1", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg not > 1>", constraint.inspect
+      assert_equal "pkg <= 1", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg <= 1>", constraint.inspect
     end
 
     def test_invert_multiple_constraints
       constraint = VersionConstraint.parse(@package, ["> 1", "< 2"]).invert
-      assert_equal "pkg not (> 1, < 2)", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg not (> 1, < 2)>", constraint.inspect
+      assert_equal "pkg <= 1 OR >= 2", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg <= 1 OR >= 2>", constraint.inspect
     end
 
     def test_difference
@@ -84,8 +84,8 @@ module PubGrub
 
       constraint = a.difference(b)
 
-      assert_equal "pkg >= 1, not ~> 1", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg >= 1, not ~> 1>", constraint.inspect
+      assert_equal "pkg >= 2", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg >= 2>", constraint.inspect
     end
 
     def test_relation_subset
