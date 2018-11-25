@@ -193,5 +193,24 @@ module PubGrub
       assert_equal empty, a.intersect(empty)
       assert_equal empty, empty.intersect(a)
     end
+
+    def test_contiguous_to
+      # intersecting
+      assert (VersionRange.any).contiguous_to?(VersionRange.any)
+      assert (VersionRange.new(min: 1, max: 4)).contiguous_to?(VersionRange.new(min: 3, max: 6))
+
+      # touching
+      refute (VersionRange.new(min: 1, max: 3)).contiguous_to?(
+        VersionRange.new(min: 3, max: 6))
+      assert (VersionRange.new(min: 1, max: 3, include_max: true)).contiguous_to?(
+        VersionRange.new(min: 3, max: 6))
+      assert (VersionRange.new(min: 1, max: 3)).contiguous_to?(
+        VersionRange.new(min: 3, max: 6, include_min: true))
+      refute (VersionRange.new(min: 1, max: 3, include_min: true)).contiguous_to?(
+        VersionRange.new(min: 3, max: 6, include_max: true))
+
+      refute VersionRange.new.contiguous_to?(VersionRange.empty)
+      refute VersionRange.empty.contiguous_to?(VersionRange.empty)
+    end
   end
 end

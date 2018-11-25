@@ -188,6 +188,14 @@ module PubGrub
       Union.new([self, other])
     end
 
+    def contiguous_to?(other)
+      return false if other.empty?
+
+      intersects?(other) ||
+        (min == other.max && (include_min || other.include_max)) ||
+        (max == other.min && (include_max || other.include_min))
+    end
+
     def constraints
       return ["any"] if any?
       return ["= #{min}"] if min == max
