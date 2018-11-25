@@ -53,7 +53,27 @@ module PubGrub
     end
 
     def intersects?(other)
-      ranges.any? { |r| r.intersects?(other) }
+      my_ranges = ranges.dup
+      other_ranges =
+        if other.instance_of?(VersionRange)
+          [other]
+        else
+          other.ranges.dup
+        end
+
+      my_range = my_ranges.shift
+      other_range = other_ranges.shift
+      while my_range && other_range
+        if my_range.intersects?(other_range)
+          return true
+        end
+
+        if !my_range.max || (other_range.max && other_range.max < my_range.max)
+          other_range = other_ranges.shift
+        else
+          my_range = my_ranges.shift
+        end
+      end
     end
     alias_method :allows_any?, :intersects?
 
