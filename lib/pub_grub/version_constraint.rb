@@ -8,11 +8,10 @@ module PubGrub
 
     # @param package [PubGrub::Package]
     # @param constraint [String]
-    def initialize(package, constraint = nil, range: nil, bitmap: nil)
+    def initialize(package, constraint = nil, range: nil)
       @package = package
       @constraint = Array(constraint)
       @range = range
-      @bitmap = bitmap # Calculated lazily
     end
 
     class << self
@@ -58,22 +57,6 @@ module PubGrub
       def any(package)
         range = VersionRange.new
         new(package, nil, range: range)
-      end
-
-      def bitmap_matching(package)
-        package.versions.select do |version|
-          yield version
-        end.inject(0) do |acc, version|
-          acc | (1 << version.id)
-        end
-      end
-    end
-
-    def bitmap
-      return @bitmap if @bitmap
-
-      @bitmap = self.class.bitmap_matching(package) do |version|
-        range.include?(Gem::Version.new(version.name))
       end
     end
 
