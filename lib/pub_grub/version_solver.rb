@@ -99,7 +99,9 @@ module PubGrub
       version = unsatisfied_term.versions.first
 
       if version.nil?
-        raise "required term with no versions: #{unsatisfied_term}"
+        cause = Incompatibility::NoVersions.new(unsatisfied_term)
+        add_incompatibility Incompatibility.new([unsatisfied_term], cause: cause)
+        return unsatisfied_term.package
       end
 
       conflict = false
