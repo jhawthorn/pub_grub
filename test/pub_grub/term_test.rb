@@ -19,7 +19,6 @@ module PubGrub
       term = build_term("~> 1.0")
 
       assert_equal "pkg ~> 1.0", term.to_s
-      assert_equal 0b110, term.normalized_constraint.bitmap
       assert term.positive?
       refute term.negative?
       refute term.empty?
@@ -29,7 +28,6 @@ module PubGrub
       term = build_term("~> 1.0").invert
 
       assert_equal "not pkg ~> 1.0", term.to_s
-      assert_equal 0b001, term.normalized_constraint.bitmap
       refute term.positive?
       assert term.negative?
       refute term.empty?
@@ -42,7 +40,6 @@ module PubGrub
       term = a.intersect(b)
 
       assert_equal "not pkg 1.0.0 OR 2.0.0", term.to_s
-      assert_equal 0b010, term.normalized_constraint.bitmap
       refute term.empty?
     end
 
