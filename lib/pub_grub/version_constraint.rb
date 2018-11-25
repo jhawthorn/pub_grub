@@ -117,7 +117,7 @@ module PubGrub
     end
 
     def allows_all?(other)
-      bitmap.allbits?(other.bitmap)
+      range.allows_all?(other.range)
     end
 
     def allows_any?(other)
