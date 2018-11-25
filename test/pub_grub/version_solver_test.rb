@@ -278,7 +278,9 @@ ERR
       every version of x is incompatible with foo 1.1.0.
     And because foo 1.1.0 depends on x ~> 1.0,
       foo 1.1.0 is forbidden.
-    So, because foo ~> 1.0.0 OR > 1.1.0, < 2 is forbidden (1),
+    And because foo ~> 1.0.0 OR > 1.1.0, < 2 is forbidden (1),
+      foo >= 1.0.0, < 2 is forbidden.
+    So, because root depends on foo ~> 1.0,
       version solving has failed.
 ERR
     end

@@ -139,8 +139,7 @@ module PubGrub
     end
 
     def empty?
-      # FIXME: this should probably be range.empty?
-      versions.empty?
+      range.empty?
     end
 
     # Does this match every version of the package
