@@ -55,7 +55,7 @@ module PubGrub
     class Union
       attr_reader :ranges
 
-      def self.union(ranges)
+      def self.normalize_ranges(ranges)
         ranges = ranges.flat_map do |range|
           if range.is_a?(Union)
             range.ranges
@@ -76,6 +76,12 @@ module PubGrub
             ranges << range
           end
         end
+
+        ranges
+      end
+
+      def self.union(ranges)
+        ranges = normalize_ranges(ranges)
 
         if ranges.size == 0
           VersionRange.empty
