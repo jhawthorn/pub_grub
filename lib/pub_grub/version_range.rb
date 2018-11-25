@@ -47,14 +47,22 @@ module PubGrub
     class Union
       attr_reader :ranges
 
-      def initialize(ranges)
-        @ranges = ranges.flat_map do |range|
+      def self.union(ranges)
+        ranges = ranges.flat_map do |range|
           if range.is_a?(Union)
             range.ranges
           else
             [range]
           end
         end
+
+        ranges.reject!(&:empty?)
+
+        new(ranges)
+      end
+
+      def initialize(ranges)
+        @ranges = ranges
       end
 
       def include?(version)
@@ -185,7 +193,7 @@ module PubGrub
     end
 
     def union(other)
-      Union.new([self, other])
+      Union.union([self, other])
     end
 
     def contiguous_to?(other)
