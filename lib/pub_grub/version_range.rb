@@ -23,6 +23,10 @@ module PubGrub
         false
       end
 
+      def allows_all?(other)
+        other.empty?
+      end
+
       def include?(_)
         false
       end
@@ -91,6 +95,21 @@ module PubGrub
         ranges.any? { |r| r.intersects?(other) }
       end
       alias_method :allows_any?, :intersects?
+
+      def allows_all?(other)
+        other_ranges =
+          if other.is_a?(Union)
+            other.ranges
+          else
+            [other]
+          end
+
+        other_ranges.all? do |other_range|
+          ranges.any? do |range|
+            range.allows_all?(other_range)
+          end
+        end
+      end
 
       def empty?
         false
@@ -278,6 +297,39 @@ module PubGrub
       intersects?(other) ||
         (min == other.max && (include_min || other.include_max)) ||
         (max == other.min && (include_max || other.include_min))
+    end
+
+    def allows_all?(other)
+      return true if other.empty?
+
+      if other.is_a?(Union)
+        return other.ranges.all? { |r| allows_all?(r) }
+      end
+
+      return false if max && !other.max
+      return false if min && !other.min
+
+      if min
+        case min <=> other.min
+        when -1
+        when 0
+          return false if !include_min && other.include_min
+        when 1
+          return false
+        end
+      end
+
+      if max
+        case max <=> other.max
+        when -1
+          return false
+        when 0
+          return false if !include_max && other.include_max
+        when 1
+        end
+      end
+
+      true
     end
 
     def constraints

@@ -212,5 +212,25 @@ module PubGrub
       refute VersionRange.new.contiguous_to?(VersionRange.empty)
       refute VersionRange.empty.contiguous_to?(VersionRange.empty)
     end
+
+    def test_allows_all
+      assert (VersionRange.any).allows_all?(VersionRange.empty)
+      assert (VersionRange.any).allows_all?(VersionRange.any)
+      assert (VersionRange.empty).allows_all?(VersionRange.empty)
+      refute (VersionRange.empty).allows_all?(VersionRange.any)
+
+      assert (VersionRange.new(min: 1, max: 4)).allows_all?(
+        VersionRange.new(min: 2, max: 3))
+      assert (VersionRange.new(min: 2, max: 3)).allows_all?(
+        VersionRange.new(min: 2, max: 3))
+      refute (VersionRange.new(min: 1, max: 3)).allows_all?(
+        VersionRange.new(min: 2, max: 4))
+      refute (VersionRange.new(min: 2, max: 3)).allows_all?(
+        VersionRange.new(min: 2, max: 3, include_min: true))
+      refute (VersionRange.new(min: 2, max: 3)).allows_all?(
+        VersionRange.new(min: 2, max: 3, include_max: true))
+      assert (VersionRange.new(min: 1, max: 4)).allows_all?(
+        VersionRange.new(min: 2, max: 3, include_min: true, include_max: true))
+    end
   end
 end
