@@ -15,6 +15,8 @@ module PubGrub
 
       ranges.reject!(&:empty?)
 
+      return [] if ranges.empty?
+
       mins, ranges = ranges.partition { |r| !r.min }
       original_ranges = mins + ranges.sort_by { |r| [r.include_min ? 0 : 1, r.min] }
       ranges = [original_ranges.shift]
@@ -93,6 +95,15 @@ module PubGrub
 
     def to_s
       ranges.map(&:to_s).join(" OR ")
+    end
+
+    def inspect
+      "#<#{self.class} #{to_s}>"
+    end
+
+    def ==(other)
+      self.class == other.class &&
+        self.ranges == other.ranges
     end
   end
 end

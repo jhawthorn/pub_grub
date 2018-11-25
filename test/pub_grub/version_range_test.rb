@@ -1,4 +1,4 @@
-require 'pub_grub/version_range'
+require 'test_helper'
 
 module PubGrub
   class VersionRangeTest < Minitest::Test
