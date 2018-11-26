@@ -31,7 +31,7 @@ module PubGrub
 
       @deps_by_version = Hash.new { |h, k| h[k] = {} }
 
-      root_version = "1.0.0"
+      root_version = 0
       @package_versions[Package.root] = [root_version]
       @deps_by_version[Package.root][root_version] = @root_deps
 
@@ -39,6 +39,7 @@ module PubGrub
         @packages[name] ||= Package.new(name)
         package = @packages[name]
 
+        version = Gem::Version.new(version)
         @package_versions[package] << version
         @deps_by_version[package][version] = deps
       end
@@ -52,7 +53,7 @@ module PubGrub
 
     def versions_for(package, range=VersionRange.any)
       @package_versions[package].select do |version|
-        range.include?(Gem::Version.new(version))
+        range.include?(version)
       end
     end
 
@@ -60,7 +61,7 @@ module PubGrub
       package_deps = @deps_by_version[package]
       package_versions = @package_versions[package]
       package_deps[version].map do |dep_package_name, dep_constraint_name|
-        sorted_versions = package_versions.sort_by { |v| Gem::Version.new(v) }.map(&:to_s)
+        sorted_versions = package_versions.sort
         low = high = sorted_versions.index(version)
 
         # find version low such that all >= low share the same dep
@@ -72,7 +73,7 @@ module PubGrub
           if low == 0
             nil
           else
-            Gem::Version.new(sorted_versions[low])
+            sorted_versions[low]
           end
 
         # find version high such that all < high share the same dep
@@ -84,7 +85,7 @@ module PubGrub
           if high == sorted_versions.length
             nil
           else
-            Gem::Version.new(sorted_versions[high])
+            sorted_versions[high]
           end
 
         range = VersionRange.new(min: low, max: high, include_min: true)
