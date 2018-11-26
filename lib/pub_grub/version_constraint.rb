@@ -46,9 +46,8 @@ module PubGrub
         new(package, range: ranges.inject(&:intersect))
       end
 
-      def exact(version)
-        package = version.package
-        ver = Gem::Version.new(version.name)
+      def exact(package, version)
+        ver = Gem::Version.new(version)
         range = VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
         new(package, range: range)
       end

@@ -9,7 +9,8 @@ module PubGrub
     end
 
     def self.decision(version, decision_level, index)
-      term = Term.new(VersionConstraint.exact(version), true)
+      package = version.package
+      term = Term.new(VersionConstraint.exact(package, version.name), true)
       new(term, :decision, decision_level, index)
     end
 
