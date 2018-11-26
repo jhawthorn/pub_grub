@@ -122,12 +122,9 @@ module PubGrub
       return terms if terms.length == 2 && terms[0].package != terms[1].package
 
       terms.group_by(&:package).map do |package, common_terms|
-        term =
-          common_terms.inject do |acc, term|
+        common_terms.inject do |acc, term|
           acc.intersect(term)
         end
-
-        term
       end
     end
   end
