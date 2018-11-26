@@ -95,7 +95,8 @@ module PubGrub
 
       unsatisfied_term, versions =
         unsatisfied.map do |term|
-          [term, term.versions]
+          range = term.constraint.range
+          [term, source.versions_for(term.package, range)]
         end.min_by do |(_, versions)|
           versions.count
         end

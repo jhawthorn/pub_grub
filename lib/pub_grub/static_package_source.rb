@@ -48,6 +48,12 @@ module PubGrub
       package(package_name).version(version_name)
     end
 
+    def versions_for(package, range)
+      package.versions.select do |version|
+        range.include?(Gem::Version.new(version.name))
+      end
+    end
+
     def incompatibilities_for(version)
       package = version.package
       @deps_by_version[version].map do |dep_package_name, dep_constraint_name|
