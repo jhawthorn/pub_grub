@@ -38,8 +38,9 @@ module PubGrub
       @package_list.each do |name, version, deps|
         @packages[name] ||= Package.new(name)
         package = @packages[name]
-        @package_versions[name] << version
-        @packages[name].add_version(version)
+        package.add_version(version)
+
+        @package_versions[package] << version
         @deps_by_version[package][version] = deps
       end
     end
@@ -62,12 +63,13 @@ module PubGrub
 
     def incompatibilities_for(package, version)
       package_deps = @deps_by_version[package]
+      package_versions = @package_versions[package]
       package_deps[version.name].map do |dep_package_name, dep_constraint_name|
         self_constraint =
-          if package.versions == [version]
+          if package_versions == [version.name]
             VersionConstraint.any(package)
           else
-            sorted_versions = package.versions.sort_by { |v| Gem::Version.new(v.name) }.map(&:to_s)
+            sorted_versions = package_versions.sort_by { |v| Gem::Version.new(v) }.map(&:to_s)
             low = high = sorted_versions.index(version.name)
 
             # find version low such that all >= low share the same dep
