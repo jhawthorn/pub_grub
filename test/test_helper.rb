@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require 'minitest'
 require "pub_grub"
+require "pub_grub/rubygems"
 
 PubGrub.logger.level = Logger::DEBUG if ENV['DEBUG']
 

@@ -1,7 +1,5 @@
 require 'pub_grub/version_range'
 
-require 'rubygems/requirement'
-
 module PubGrub
   class VersionConstraint
     attr_reader :package, :range
@@ -15,35 +13,7 @@ module PubGrub
 
     class << self
       def parse(package, constraint)
-        # TODO: Should not be hardcoded to rubygems semantics
-        requirement = Gem::Requirement.new(constraint)
-        ranges = requirement.requirements.map do |(op, ver)|
-          case op
-          when "~>"
-            # TODO: not sure this is correct for prereleases
-            VersionRange.new(min: ver, max: ver.bump, include_min: true)
-          when ">"
-            VersionRange.new(min: ver)
-          when ">="
-            if ver == Gem::Version.new("0")
-              VersionRange.any
-            else
-              VersionRange.new(min: ver, include_min: true)
-            end
-          when "<"
-            VersionRange.new(max: ver)
-          when "<="
-            VersionRange.new(max: ver, include_max: true)
-          when "="
-            VersionRange.new(min: ver, max: ver, include_min: true, include_max: true)
-          when "!="
-            VersionRange.new(min: ver, max: ver, include_min: true, include_max: true).invert
-          else
-            raise "bad version specifier: #{op}"
-          end
-        end
-
-        new(package, range: ranges.inject(&:intersect))
+        PubGrub::RubyGems.parse_constraint(package, constraint)
       end
 
       def exact(package, version)
