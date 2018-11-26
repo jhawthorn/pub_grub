@@ -112,7 +112,7 @@ module PubGrub
 
       conflict = false
 
-      source.incompatibilities_for(version).each do |incompatibility|
+      source.incompatibilities_for(package, version).each do |incompatibility|
         add_incompatibility incompatibility
 
         conflict ||= incompatibility.terms.all? do |term|

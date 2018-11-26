@@ -60,8 +60,7 @@ module PubGrub
       end
     end
 
-    def incompatibilities_for(version)
-      package = version.package
+    def incompatibilities_for(package, version)
       package_deps = @deps_by_version[package]
       package_deps[version.name].map do |dep_package_name, dep_constraint_name|
         self_constraint =
