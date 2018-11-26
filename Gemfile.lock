@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pub_grub (0.2.0)
+    pub_grub (0.3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -25,4 +25,4 @@ DEPENDENCIES
   stackprof (~> 0.2.12)
 
 BUNDLED WITH
-   1.16.1
+   1.16.4
