@@ -50,10 +50,6 @@ module PubGrub
     end
     alias_method :package, :get_package
 
-    def version(package_name, version_name)
-      package(package_name).version(version_name)
-    end
-
     def versions_for(package, range=VersionRange.any)
       @package_versions[package].select do |version|
         range.include?(Gem::Version.new(version))
