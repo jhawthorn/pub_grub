@@ -3,12 +3,10 @@
 module PubGrub
   class Package
 
-    attr_reader :name, :versions
+    attr_reader :name
 
     def initialize(name)
       @name = name
-      @versions = []
-      yield self if block_given?
     end
 
     def inspect
