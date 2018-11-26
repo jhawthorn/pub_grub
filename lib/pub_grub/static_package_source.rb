@@ -38,7 +38,6 @@ module PubGrub
       @package_list.each do |name, version, deps|
         @packages[name] ||= Package.new(name)
         package = @packages[name]
-        package.add_version(version)
 
         @package_versions[package] << version
         @deps_by_version[package][version] = deps
@@ -56,9 +55,9 @@ module PubGrub
     end
 
     def versions_for(package, range=VersionRange.any)
-      package.versions.select do |version|
-        range.include?(Gem::Version.new(version.name))
-      end.map(&:name)
+      @package_versions[package].select do |version|
+        range.include?(Gem::Version.new(version))
+      end
     end
 
     def incompatibilities_for(package, version)
