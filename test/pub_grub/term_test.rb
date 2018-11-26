@@ -7,7 +7,7 @@ module PubGrub
     end
 
     def build_term(constraint, positive = true)
-      constraint = VersionConstraint.parse(@package, constraint)
+      constraint = PubGrub::RubyGems.parse_constraint(@package, constraint)
       Term.new(constraint, positive)
     end
 

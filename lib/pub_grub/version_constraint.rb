@@ -12,10 +12,6 @@ module PubGrub
     end
 
     class << self
-      def parse(package, constraint)
-        PubGrub::RubyGems.parse_constraint(package, constraint)
-      end
-
       def exact(package, version)
         range = VersionRange.new(min: version, max: version, include_min: true, include_max: true)
         new(package, range: range)

@@ -100,7 +100,7 @@ module PubGrub
           return [Incompatibility.new([Term.new(self_constraint, true)], cause: cause)]
         end
 
-        dep_constraint = VersionConstraint.parse(dep_package, dep_constraint_name)
+        dep_constraint = PubGrub::RubyGems.parse_constraint(dep_package, dep_constraint_name)
 
         Incompatibility.new([Term.new(self_constraint, true), Term.new(dep_constraint, false)], cause: :dependency)
       end

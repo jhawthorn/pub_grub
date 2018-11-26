@@ -6,6 +6,10 @@ module PubGrub
       @package = Package.new("pkg")
     end
 
+    def parse(package, constraint)
+      PubGrub::RubyGems.parse_constraint(package, constraint)
+    end
+
     def test_empty_restriction
       constraint = VersionConstraint.any(@package)
 
@@ -17,7 +21,7 @@ module PubGrub
     end
 
     def test_semver_restriction
-      constraint = VersionConstraint.parse(@package, "~> 1.0")
+      constraint = parse(@package, "~> 1.0")
 
       assert_equal "pkg ~> 1.0", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg ~> 1.0>", constraint.inspect
@@ -31,8 +35,8 @@ module PubGrub
     end
 
     def test_intersection
-      a = VersionConstraint.parse(@package, "> 1")
-      b = VersionConstraint.parse(@package, "< 2")
+      a = parse(@package, "> 1")
+      b = parse(@package, "< 2")
 
       constraint = a.intersect(b)
 
@@ -41,8 +45,8 @@ module PubGrub
     end
 
     def test_no_intersection
-      a = VersionConstraint.parse(@package, "<= 1")
-      b = VersionConstraint.parse(@package, ">= 2")
+      a = parse(@package, "<= 1")
+      b = parse(@package, ">= 2")
 
       constraint = a.intersect(b)
 
@@ -57,20 +61,20 @@ module PubGrub
     end
 
     def test_invert_single_constraint
-      constraint = VersionConstraint.parse(@package, "> 1").invert
+      constraint = parse(@package, "> 1").invert
       assert_equal "pkg <= 1", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg <= 1>", constraint.inspect
     end
 
     def test_invert_multiple_constraints
-      constraint = VersionConstraint.parse(@package, ["> 1", "< 2"]).invert
+      constraint = parse(@package, ["> 1", "< 2"]).invert
       assert_equal "pkg <= 1 OR >= 2", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg <= 1 OR >= 2>", constraint.inspect
     end
 
     def test_difference
-      a = VersionConstraint.parse(@package, [">= 1"])
-      b = VersionConstraint.parse(@package, ["~> 1"])
+      a = parse(@package, [">= 1"])
+      b = parse(@package, ["~> 1"])
 
       constraint = a.difference(b)
 
@@ -80,8 +84,8 @@ module PubGrub
 
     def test_relation_subset
       # foo ~> 1.1.0 is a subset of foo ~> 1.0
-      a = VersionConstraint.parse(@package, ["~> 1.1.0"])
-      b = VersionConstraint.parse(@package, ["~> 1.0"])
+      a = parse(@package, ["~> 1.1.0"])
+      b = parse(@package, ["~> 1.0"])
       assert_equal :subset, a.relation(b)
       assert a.subset?(b)
       assert a.overlap?(b)
@@ -90,8 +94,8 @@ module PubGrub
 
     def test_relation_overlap
       # foo ~> 1.0 overlaps with foo > 1.0
-      a = VersionConstraint.parse(@package, ["> 1.0"])
-      b = VersionConstraint.parse(@package, ["~> 1.0"])
+      a = parse(@package, ["> 1.0"])
+      b = parse(@package, ["~> 1.0"])
       assert_equal :overlap, a.relation(b)
       refute a.subset?(b)
       assert a.overlap?(b)
@@ -100,8 +104,8 @@ module PubGrub
 
     def test_relation_disjoint
       # foo ~> 1.0 is disjoint with foo ~> 2.0
-      a = VersionConstraint.parse(@package, ["~> 1.0"])
-      b = VersionConstraint.parse(@package, ["~> 2.0"])
+      a = parse(@package, ["~> 1.0"])
+      b = parse(@package, ["~> 2.0"])
       assert_equal :disjoint, a.relation(b)
       refute a.subset?(b)
       refute a.overlap?(b)
