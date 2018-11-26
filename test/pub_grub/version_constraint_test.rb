@@ -3,11 +3,7 @@ require "test_helper"
 module PubGrub
   class VersionConstraintTest < Minitest::Test
     def setup
-      @package = Package.new("pkg") do |p|
-        p.add_version "2.0.0"
-        p.add_version "1.1.0"
-        p.add_version "1.0.0"
-      end
+      @package = Package.new("pkg")
     end
 
     def test_empty_restriction
