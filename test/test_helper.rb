@@ -7,13 +7,12 @@ PubGrub.logger.level = Logger::DEBUG if ENV['DEBUG']
 module PubGrubAssertions
   def assert_solution(source, result, expected)
     expected =
-      expected.map do |package, version|
-        source.version(package, version)
+      expected.transform_keys do |package|
+        source.package(package)
       end
-    expected -= [PubGrub::Package.root_version]
-    result   -= [PubGrub::Package.root_version]
+    expected[PubGrub::Package.root] = "1.0.0"
 
-    assert_equal expected.sort, result.sort
+    assert_equal expected, result
   end
 end
 

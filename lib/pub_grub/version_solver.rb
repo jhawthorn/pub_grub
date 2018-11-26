@@ -39,7 +39,7 @@ module PubGrub
         logger.info "* #{package.name} #{version}"
       end
 
-      result.values
+      result
     end
 
     private
@@ -123,7 +123,7 @@ module PubGrub
       unless conflict
         logger.info("selecting #{package.name} #{version}")
 
-        solution.decide(package, version)
+        solution.decide(package, version.name)
       end
 
       package

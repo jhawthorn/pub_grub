@@ -64,7 +64,7 @@ module PubGrub
       @backtracking = false;
 
       decisions[package] = version
-      assignment = Assignment.decision(package, version.name, decision_level, assignments.length)
+      assignment = Assignment.decision(package, version, decision_level, assignments.length)
       add_assignment(assignment)
     end
 
