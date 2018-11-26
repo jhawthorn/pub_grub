@@ -11,7 +11,7 @@ module PubGrubAssertions
         [source.package(package), Gem::Version.new(version)]
       end
     ]
-    expected[PubGrub::Package.root] = 0
+    expected[PubGrub::Package.root] = PubGrub::Package.root_version
 
     assert_equal expected, result
   end

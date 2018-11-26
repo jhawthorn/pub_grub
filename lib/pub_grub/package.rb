@@ -17,8 +17,15 @@ module PubGrub
       name <=> other.name
     end
 
+    ROOT = Package.new(:root)
+    ROOT_VERSION = 0
+
     def self.root
-      @root ||= Package.new(:root)
+      ROOT
+    end
+
+    def self.root_version
+      ROOT_VERSION
     end
   end
 end

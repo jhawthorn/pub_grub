@@ -31,7 +31,7 @@ module PubGrub
 
       @deps_by_version = Hash.new { |h, k| h[k] = {} }
 
-      root_version = 0
+      root_version = Package.root_version
       @package_versions[Package.root] = [root_version]
       @deps_by_version[Package.root][root_version] = @root_deps
 
