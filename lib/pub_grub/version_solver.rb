@@ -32,14 +32,14 @@ module PubGrub
         next_package = choose_package_version
       end
 
-      result = solution.decisions.values
+      result = solution.decisions
 
       logger.info "Solution found after #{solution.attempted_solutions} attempts:"
-      result.each do |version|
-        logger.info "* #{version.package.name} #{version}"
+      result.each do |package, version|
+        logger.info "* #{package.name} #{version}"
       end
 
-      result
+      result.values
     end
 
     private
@@ -97,16 +97,17 @@ module PubGrub
         unsatisfied.map do |term|
           range = term.constraint.range
           [term, source.versions_for(term.package, range)]
-        end.min_by do |(_, versions)|
-          versions.count
+        end.min_by do |(_, v)|
+          v.count
         end
 
+      package = unsatisfied_term.package
       version = versions.first
 
       if version.nil?
         cause = Incompatibility::NoVersions.new(unsatisfied_term)
         add_incompatibility Incompatibility.new([unsatisfied_term], cause: cause)
-        return unsatisfied_term.package
+        return package
       end
 
       conflict = false
@@ -115,17 +116,17 @@ module PubGrub
         add_incompatibility incompatibility
 
         conflict ||= incompatibility.terms.all? do |term|
-          term.package == version.package || solution.satisfies?(term)
+          term.package == package || solution.satisfies?(term)
         end
       end
 
       unless conflict
-        logger.info("selecting #{version.package.name} #{version}")
+        logger.info("selecting #{package.name} #{version}")
 
         solution.decide(version)
       end
 
-      version.package
+      package
     end
 
     def resolve_conflict(incompatibility)
