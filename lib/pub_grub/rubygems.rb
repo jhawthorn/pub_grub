@@ -34,6 +34,10 @@ module PubGrub
       ranges.inject(&:intersect)
     end
 
+    def requirement_to_constraint(package, requirement)
+      PubGrub::VersionConstraint.new(package, range: requirement_to_range(requirement))
+    end
+
     def parse_range(dep)
       requirement_to_range(Gem::Requirement.new(dep))
     end
