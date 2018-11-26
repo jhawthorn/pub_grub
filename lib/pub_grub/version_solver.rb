@@ -93,10 +93,14 @@ module PubGrub
         return nil
       end
 
-      unsatisfied_term = unsatisfied.min_by do |term|
-        term.versions.count
-      end
-      version = unsatisfied_term.versions.first
+      unsatisfied_term, versions =
+        unsatisfied.map do |term|
+          [term, term.versions]
+        end.min_by do |(_, versions)|
+          versions.count
+        end
+
+      version = versions.first
 
       if version.nil?
         cause = Incompatibility::NoVersions.new(unsatisfied_term)
