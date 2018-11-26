@@ -63,8 +63,9 @@ module PubGrub
       @attempted_solutions += 1 if @backtracking
       @backtracking = false;
 
-      decisions[version.package] = version
-      assignment = Assignment.decision(version, decision_level, assignments.length)
+      package = version.package
+      decisions[package] = version
+      assignment = Assignment.decision(package, version.name, decision_level, assignments.length)
       add_assignment(assignment)
     end
 

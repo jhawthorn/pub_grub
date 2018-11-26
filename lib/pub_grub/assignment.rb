@@ -8,9 +8,8 @@ module PubGrub
       @index = index
     end
 
-    def self.decision(version, decision_level, index)
-      package = version.package
-      term = Term.new(VersionConstraint.exact(package, version.name), true)
+    def self.decision(package, version, decision_level, index)
+      term = Term.new(VersionConstraint.exact(package, version), true)
       new(term, :decision, decision_level, index)
     end
 
