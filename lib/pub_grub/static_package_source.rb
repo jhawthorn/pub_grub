@@ -58,15 +58,15 @@ module PubGrub
     def versions_for(package, range=VersionRange.any)
       package.versions.select do |version|
         range.include?(Gem::Version.new(version.name))
-      end
+      end.map(&:name)
     end
 
     def incompatibilities_for(package, version)
       package_deps = @deps_by_version[package]
       package_versions = @package_versions[package]
-      package_deps[version.name].map do |dep_package_name, dep_constraint_name|
+      package_deps[version].map do |dep_package_name, dep_constraint_name|
         sorted_versions = package_versions.sort_by { |v| Gem::Version.new(v) }.map(&:to_s)
-        low = high = sorted_versions.index(version.name)
+        low = high = sorted_versions.index(version)
 
         # find version low such that all >= low share the same dep
         while low > 0 &&

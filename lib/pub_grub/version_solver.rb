@@ -123,7 +123,7 @@ module PubGrub
       unless conflict
         logger.info("selecting #{package.name} #{version}")
 
-        solution.decide(package, version.name)
+        solution.decide(package, version)
       end
 
       package
