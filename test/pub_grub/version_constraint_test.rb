@@ -16,7 +16,6 @@ module PubGrub
       assert constraint.any?
       refute constraint.empty?
 
-      assert_equal @package.versions, constraint.versions
       assert_equal "pkg >= 0", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg >= 0>", constraint.inspect
     end
@@ -24,17 +23,15 @@ module PubGrub
     def test_semver_restriction
       constraint = VersionConstraint.parse(@package, "~> 1.0")
 
-      assert_equal @package.versions[1,2], constraint.versions
       assert_equal "pkg ~> 1.0", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg ~> 1.0>", constraint.inspect
     end
 
     def test_no_versions
-      constraint = VersionConstraint.parse(@package, "> 99")
+      constraint = VersionConstraint.empty(@package)
 
-      assert_equal [], constraint.versions
-      assert_equal "pkg > 99", constraint.to_s
-      assert_equal "#<PubGrub::VersionConstraint pkg > 99>", constraint.inspect
+      assert_equal "pkg (no versions)", constraint.to_s
+      assert_equal "#<PubGrub::VersionConstraint pkg (no versions)>", constraint.inspect
     end
 
     def test_intersection
@@ -43,7 +40,6 @@ module PubGrub
 
       constraint = a.intersect(b)
 
-      assert_equal [@package.versions[1]], constraint.versions
       assert_equal "pkg > 1, < 2", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg > 1, < 2>", constraint.inspect
     end
@@ -54,14 +50,12 @@ module PubGrub
 
       constraint = a.intersect(b)
 
-      assert_equal [], constraint.versions
       assert_equal "pkg (no versions)", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg (no versions)>", constraint.inspect
     end
 
     def test_invert_no_restriction
       constraint = VersionConstraint.any(@package).invert
-      assert_equal [], constraint.versions
       assert_equal "pkg (no versions)", constraint.to_s
       assert_equal "#<PubGrub::VersionConstraint pkg (no versions)>", constraint.inspect
     end

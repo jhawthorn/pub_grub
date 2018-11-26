@@ -82,9 +82,6 @@ module PubGrub
       relation(other) == :subset
     end
 
-    extend Forwardable
-    def_delegators :normalized_constraint, :versions
-
     def positive?
       @positive
     end

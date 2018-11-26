@@ -54,8 +54,11 @@ module PubGrub
       end
 
       def any(package)
-        range = VersionRange.new
-        new(package, range: range)
+        new(package, range: VersionRange.any)
+      end
+
+      def empty(package)
+        new(package, range: VersionRange.empty)
       end
     end
 
@@ -82,12 +85,6 @@ module PubGrub
 
     def difference(other)
       intersect(other.invert)
-    end
-
-    def versions
-      package.versions.select do |version|
-        range.include?(Gem::Version.new(version.name))
-      end
     end
 
     def allows_all?(other)
