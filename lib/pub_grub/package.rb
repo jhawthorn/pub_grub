@@ -45,7 +45,7 @@ module PubGrub
     end
 
     def inspect
-      "#<#{self.class} #{name.inspect} (#{versions.count} versions)>"
+      "#<#{self.class} #{name.inspect}>"
     end
 
     def <=>(other)
