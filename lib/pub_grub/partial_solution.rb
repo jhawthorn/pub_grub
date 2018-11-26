@@ -59,11 +59,10 @@ module PubGrub
       end
     end
 
-    def decide(version)
+    def decide(package, version)
       @attempted_solutions += 1 if @backtracking
       @backtracking = false;
 
-      package = version.package
       decisions[package] = version
       assignment = Assignment.decision(package, version.name, decision_level, assignments.length)
       add_assignment(assignment)
