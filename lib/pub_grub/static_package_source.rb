@@ -65,41 +65,36 @@ module PubGrub
       package_deps = @deps_by_version[package]
       package_versions = @package_versions[package]
       package_deps[version.name].map do |dep_package_name, dep_constraint_name|
-        self_constraint =
-          if package_versions == [version.name]
-            VersionConstraint.any(package)
+        sorted_versions = package_versions.sort_by { |v| Gem::Version.new(v) }.map(&:to_s)
+        low = high = sorted_versions.index(version.name)
+
+        # find version low such that all >= low share the same dep
+        while low > 0 &&
+            package_deps[sorted_versions[low - 1]][dep_package_name] == dep_constraint_name
+          low -= 1
+        end
+        low =
+          if low == 0
+            nil
           else
-            sorted_versions = package_versions.sort_by { |v| Gem::Version.new(v) }.map(&:to_s)
-            low = high = sorted_versions.index(version.name)
-
-            # find version low such that all >= low share the same dep
-            while low > 0 &&
-                package_deps[sorted_versions[low - 1]][dep_package_name] == dep_constraint_name
-              low -= 1
-            end
-            low =
-              if low == 0
-                nil
-              else
-                Gem::Version.new(sorted_versions[low])
-              end
-
-            # find version high such that all < high share the same dep
-            while high < sorted_versions.length &&
-                package_deps[sorted_versions[high]][dep_package_name] == dep_constraint_name
-              high += 1
-            end
-            high =
-              if high == sorted_versions.length
-                nil
-              else
-                Gem::Version.new(sorted_versions[high])
-              end
-
-            range = VersionRange.new(min: low, max: high, include_min: true)
-
-            VersionConstraint.new(package, range: range)
+            Gem::Version.new(sorted_versions[low])
           end
+
+        # find version high such that all < high share the same dep
+        while high < sorted_versions.length &&
+            package_deps[sorted_versions[high]][dep_package_name] == dep_constraint_name
+          high += 1
+        end
+        high =
+          if high == sorted_versions.length
+            nil
+          else
+            Gem::Version.new(sorted_versions[high])
+          end
+
+        range = VersionRange.new(min: low, max: high, include_min: true)
+
+        self_constraint = VersionConstraint.new(package, range: range)
 
         dep_package = @packages[dep_package_name]
 
