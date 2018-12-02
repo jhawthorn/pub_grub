@@ -46,6 +46,10 @@ module PubGrub
       def invert
         VersionRange.any
       end
+
+      def select_versions(_)
+        []
+      end
     end
 
     def self.empty
@@ -73,6 +77,10 @@ module PubGrub
 
     def include?(version)
       compare_version(version) == 0
+    end
+
+    def select_versions(all_versions)
+      all_versions.select { |version| include?(version) }
     end
 
     def compare_version(version)

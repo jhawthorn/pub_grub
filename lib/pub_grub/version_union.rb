@@ -52,6 +52,12 @@ module PubGrub
       !!ranges.bsearch {|r| r.compare_version(version) }
     end
 
+    def select_versions(versions)
+      ranges.flat_map do |range|
+        range.select_versions(versions)
+      end
+    end
+
     def intersects?(other)
       my_ranges = ranges.dup
       other_ranges =

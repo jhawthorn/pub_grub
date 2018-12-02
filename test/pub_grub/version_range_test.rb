@@ -235,5 +235,49 @@ module PubGrub
       assert (VersionRange.new(min: 1, max: 4)).allows_all?(
         VersionRange.new(min: 2, max: 3, include_min: true, include_max: true))
     end
+
+    def test_select_versions
+      versions = (0..9).to_a
+
+      range = VersionRange.empty
+      expected = []
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.any
+      expected = versions
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5)
+      expected = [3, 4]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_min: true)
+      expected = [2, 3, 4]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_max: true)
+      expected = [3, 4, 5]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_min: true, include_max: true)
+      expected = [2, 3, 4, 5]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: nil, max: 5)
+      expected = [0, 1, 2, 3, 4]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: nil)
+      expected = [3, 4, 5, 6, 7, 8, 9]
+      assert_equal expected, versions.select { |v| range.include?(v) }
+      assert_equal expected, range.select_versions(versions)
+    end
   end
 end
