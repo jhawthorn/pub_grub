@@ -79,8 +79,27 @@ module PubGrub
       compare_version(version) == 0
     end
 
-    def select_versions(all_versions)
-      all_versions.select { |version| include?(version) }
+    # Returns verisons which are included by this range.
+    #
+    # versions must be sorted
+    def select_versions(versions)
+      if min
+        if include_min?
+          versions = versions.drop_while { |v| v < min }
+        else
+          versions = versions.drop_while { |v| v <= min }
+        end
+      end
+
+      if max
+        if include_max?
+          versions = versions.take_while { |v| v <= max }
+        else
+          versions = versions.take_while { |v| v < max }
+        end
+      end
+
+      versions
     end
 
     def compare_version(version)
