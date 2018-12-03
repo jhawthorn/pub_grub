@@ -279,5 +279,43 @@ module PubGrub
       assert_equal expected, versions.select { |v| range.include?(v) }
       assert_equal expected, range.select_versions(versions)
     end
+
+    def test_select_versions_outside_range
+      versions = (3..5).to_a
+
+      range = VersionRange.new(min: 5)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(max: 2)
+      assert_equal [], range.select_versions(versions)
+    end
+
+    def test_select_versions_from_empty_list
+      versions = []
+
+      range = VersionRange.empty
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.any
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_min: true)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_max: true)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: 5, include_min: true, include_max: true)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: nil, max: 5)
+      assert_equal [], range.select_versions(versions)
+
+      range = VersionRange.new(min: 2, max: nil)
+      assert_equal [], range.select_versions(versions)
+    end
   end
 end

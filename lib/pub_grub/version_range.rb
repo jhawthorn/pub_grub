@@ -79,27 +79,46 @@ module PubGrub
       compare_version(version) == 0
     end
 
+    # Partitions passed versions into [lower, within, higher]
+    #
+    # versions must be sorted
+    def partition_versions(versions)
+      min_version =
+        if !min
+          versions[0]
+        elsif include_min?
+          versions.bsearch { |v| v >= min }
+        else
+          versions.bsearch { |v| v > min }
+        end
+      min_index = min_version.nil? ? versions.size : versions.index(min_version)
+
+      lower = versions.slice(0, min_index)
+      versions = versions.slice(min_index, versions.size)
+
+      max_version =
+        if !max
+          nil
+        elsif include_max?
+          versions.bsearch { |v| !(v <= max) }
+        else
+          versions.bsearch { |v| !(v < max) }
+        end
+
+      max_index = max_version.nil? ? versions.size : versions.index(max_version)
+
+      [
+        lower,
+        versions.slice(0, max_index),
+        versions.slice(max_index, versions.size)
+      ]
+    end
+
     # Returns verisons which are included by this range.
     #
     # versions must be sorted
     def select_versions(versions)
-      if min
-        if include_min?
-          versions = versions.drop_while { |v| v < min }
-        else
-          versions = versions.drop_while { |v| v <= min }
-        end
-      end
-
-      if max
-        if include_max?
-          versions = versions.take_while { |v| v <= max }
-        else
-          versions = versions.take_while { |v| v < max }
-        end
-      end
-
-      versions
+      partition_versions(versions)[1]
     end
 
     def compare_version(version)
