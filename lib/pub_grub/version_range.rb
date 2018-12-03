@@ -83,29 +83,26 @@ module PubGrub
     #
     # versions must be sorted
     def partition_versions(versions)
-      min_version =
-        if !min
-          versions[0]
+      min_index =
+        if !min || versions.empty?
+          0
         elsif include_min?
-          versions.bsearch { |v| v >= min }
+          (0..versions.size).bsearch { |i| versions[i].nil? || versions[i] >= min }
         else
-          versions.bsearch { |v| v > min }
+          (0..versions.size).bsearch { |i| versions[i].nil? || versions[i] > min }
         end
-      min_index = min_version.nil? ? versions.size : versions.index(min_version)
 
       lower = versions.slice(0, min_index)
       versions = versions.slice(min_index, versions.size)
 
-      max_version =
-        if !max
-          nil
+      max_index =
+        if !max || versions.empty?
+          versions.size
         elsif include_max?
-          versions.bsearch { |v| !(v <= max) }
+          (0..versions.size).bsearch { |i| versions[i].nil? || versions[i] > max }
         else
-          versions.bsearch { |v| !(v < max) }
+          (0..versions.size).bsearch { |i| versions[i].nil? || versions[i] >= max }
         end
-
-      max_index = max_version.nil? ? versions.size : versions.index(max_version)
 
       [
         lower,
