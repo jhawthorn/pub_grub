@@ -115,6 +115,8 @@ module PubGrub
     #
     # versions must be sorted
     def select_versions(versions)
+      return versions if any?
+
       partition_versions(versions)[1]
     end
 
