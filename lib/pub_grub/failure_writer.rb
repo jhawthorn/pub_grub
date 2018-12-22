@@ -16,6 +16,8 @@ module PubGrub
     end
 
     def write
+      return @root.to_s unless @root.conflict?
+
       visit(@root)
 
       padding = @line_numbers.empty? ? 0 : "(#{@line_numbers.values.last}) ".length
