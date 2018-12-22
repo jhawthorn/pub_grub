@@ -27,5 +27,9 @@ module PubGrub
     def self.root_version
       ROOT_VERSION
     end
+
+    def to_s
+      name
+    end
   end
 end

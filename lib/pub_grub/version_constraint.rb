@@ -85,9 +85,9 @@ module PubGrub
       if package == Package.root
         "root"
       elsif allow_every && any?
-        "every version of #{package.name}"
+        "every version of #{package}"
       else
-        "#{package.name} #{constraint_string}"
+        "#{package} #{constraint_string}"
       end
     end
 

@@ -39,7 +39,7 @@ module PubGrub
       if solved?
         logger.info "Solution found after #{solution.attempted_solutions} attempts:"
         solution.decisions.each do |package, version|
-          logger.info "* #{package.name} #{version}"
+          logger.info "* #{package} #{version}"
         end
 
         false
@@ -135,7 +135,7 @@ module PubGrub
       end
 
       unless conflict
-        logger.info("selecting #{package.name} #{version}")
+        logger.info("selecting #{package} #{version}")
 
         solution.decide(package, version)
       end
