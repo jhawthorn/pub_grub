@@ -8,7 +8,7 @@ module PubGrub
     attr_reader :source
     attr_reader :solution
 
-    def initialize(source:)
+    def initialize(source:, root: Package.root)
       @source = source
 
       # { package => [incompatibility, ...]}
@@ -19,17 +19,15 @@ module PubGrub
       @solution = PartialSolution.new
 
       add_incompatibility Incompatibility.new([
-        Term.new(VersionConstraint.any(Package.root), false)
+        Term.new(VersionConstraint.any(root), false)
       ], cause: :root)
+
+      propagate(root)
     end
 
     def solve
-      next_package = Package.root
-
-      while next_package
+      while next_package = choose_package_version
         propagate(next_package)
-
-        next_package = choose_package_version
       end
 
       result = solution.decisions
