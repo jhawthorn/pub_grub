@@ -27,6 +27,46 @@ module PubGrub
       }
     end
 
+    def test_iterative_solving
+      source = StaticPackageSource.new do |s|
+        s.add 'a', '1', deps: { 'b' => '1', 'c' => '1' }
+        s.add 'b', '1'
+        s.add 'c', '1'
+
+        s.root deps: { 'a' => '1.0.0' }
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      assert_equal 0, solver.solution.decisions.size
+      assert_equal 1, solver.solution.assignments.size
+      assert_equal 1, solver.solution.unsatisfied.size
+      solver.work
+      assert_equal 1, solver.solution.decisions.size
+      assert_equal 3, solver.solution.assignments.size
+      assert_equal 1, solver.solution.unsatisfied.size
+      solver.work
+      assert_equal 2, solver.solution.decisions.size
+      assert_equal 6, solver.solution.assignments.size
+      assert_equal 2, solver.solution.unsatisfied.size
+      solver.work
+      assert_equal 3, solver.solution.decisions.size
+      assert_equal 7, solver.solution.assignments.size
+      assert_equal 1, solver.solution.unsatisfied.size
+      solver.work
+      assert_equal 4, solver.solution.decisions.size
+      assert_equal 8, solver.solution.assignments.size
+      assert_equal 0, solver.solution.unsatisfied.size
+
+      assert_predicate solver, :solved?
+
+      assert_solution source, solver.result, {
+        'a' => '1.0.0',
+        'b' => '1.0.0',
+        'c' => '1.0.0'
+      }
+    end
+
     def test_shared_dependency_with_overlapping_constraints
       source = StaticPackageSource.new do |s|
         s.root deps: { 'a' => '1.0.0', 'b' => '1.0.0' }

@@ -25,20 +25,36 @@ module PubGrub
       propagate(root)
     end
 
-    def solve
-      while next_package = choose_package_version
-        propagate(next_package)
-      end
-
-      result = solution.decisions
-
-      logger.info "Solution found after #{solution.attempted_solutions} attempts:"
-      result.each do |package, version|
-        logger.info "* #{package.name} #{version}"
-      end
-
-      result
+    def solved?
+      solution.unsatisfied.empty?
     end
+
+    # Returns true if there is more work to be done, false otherwise
+    def work
+      return false if solved?
+
+      next_package = choose_package_version
+      propagate(next_package)
+
+      if solved?
+        logger.info "Solution found after #{solution.attempted_solutions} attempts:"
+        solution.decisions.each do |package, version|
+          logger.info "* #{package.name} #{version}"
+        end
+
+        false
+      else
+        true
+      end
+    end
+
+    def solve
+      work until solved?
+
+      solution.decisions
+    end
+
+    alias_method :result, :solve
 
     private
 
