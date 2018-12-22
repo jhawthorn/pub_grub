@@ -55,7 +55,7 @@ module PubGrub
     def select_versions(all_versions)
       versions = []
       ranges.inject(all_versions) do |acc, range|
-        lower, matching, higher = range.partition_versions(acc)
+        _, matching, higher = range.partition_versions(acc)
         versions.concat matching
         higher
       end
