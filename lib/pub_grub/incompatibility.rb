@@ -16,6 +16,10 @@ module PubGrub
     def initialize(terms, cause:)
       @cause = cause
       @terms = cleanup_terms(terms)
+
+      if cause == :dependency && @terms.length != 2
+        raise ArgumentError, "a dependency Incompatibility must have exactly two terms. Got #{terms.inspect}"
+      end
     end
 
     def failure?
@@ -44,7 +48,6 @@ module PubGrub
       when :root
         "(root dependency)"
       when :dependency
-        raise unless terms.length == 2
         "#{terms[0].to_s(allow_every: true)} depends on #{terms[1].invert}"
       when PubGrub::Incompatibility::InvalidDependency
         "#{terms[0].to_s(allow_every: true)} depends on unknown package #{cause.package}"
