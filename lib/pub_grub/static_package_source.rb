@@ -1,9 +1,10 @@
 require 'pub_grub/package'
 require 'pub_grub/version_constraint'
 require 'pub_grub/incompatibility'
+require 'pub_grub/basic_package_source'
 
 module PubGrub
-  class StaticPackageSource
+  class StaticPackageSource < BasicPackageSource
     class DSL
       def initialize(packages, root_deps)
         @packages = packages
@@ -15,7 +16,7 @@ module PubGrub
       end
 
       def add(name, version, deps: {})
-        @packages << [name, version, deps]
+        @packages << [name, Gem::Version.new(version), deps]
       end
     end
 
@@ -33,16 +34,19 @@ module PubGrub
       @deps_by_version[Package.root][root_version] = @root_deps
 
       @package_list.each do |package, version, deps|
-        version = Gem::Version.new(version)
         @packages.add(package)
         @package_versions[package] << version
         @deps_by_version[package][version] = deps
       end
+
+      super()
     end
 
-    def versions_for(package, range=VersionRange.any)
-      @package_versions[package].select do |version|
-        range.include?(version)
+    def all_versions_for(package)
+      @package_list.select do |pkg, _, _|
+        pkg == package
+      end.map do |_, version, _|
+        version
       end
     end
 
