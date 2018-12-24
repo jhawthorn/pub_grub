@@ -270,7 +270,7 @@ module PubGrub
       ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
-      assert_equal <<ERR.strip,  ex.explanation.strip
+      assert_equal <<ERR.strip, ex.explanation.strip
 Because every version of foo depends on bar ~> 2.0
   and every version of bar depends on baz ~> 3.0,
   every version of foo requires baz ~> 3.0.

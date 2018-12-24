@@ -24,32 +24,21 @@ module PubGrub
       @package_list = []
       yield DSL.new(@package_list, @root_deps)
 
-      @packages = {
-        root: Package.root
-      }
-      @package_versions = Hash.new{ |h, k| h[k] = [] }
-
+      @packages = Set.new([Package.root])
+      @package_versions = Hash.new { |h, k| h[k] = [] }
       @deps_by_version = Hash.new { |h, k| h[k] = {} }
 
       root_version = Package.root_version
       @package_versions[Package.root] = [root_version]
       @deps_by_version[Package.root][root_version] = @root_deps
 
-      @package_list.each do |name, version, deps|
-        @packages[name] ||= Package.new(name)
-        package = @packages[name]
-
+      @package_list.each do |package, version, deps|
         version = Gem::Version.new(version)
+        @packages.add(package)
         @package_versions[package] << version
         @deps_by_version[package][version] = deps
       end
     end
-
-    def get_package(name)
-      @packages[name] ||
-        raise("No such package in source: #{name.inspect}")
-    end
-    alias_method :package, :get_package
 
     def versions_for(package, range=VersionRange.any)
       @package_versions[package].select do |version|
@@ -60,13 +49,13 @@ module PubGrub
     def incompatibilities_for(package, version)
       package_deps = @deps_by_version[package]
       package_versions = @package_versions[package]
-      package_deps[version].map do |dep_package_name, dep_constraint_name|
+      package_deps[version].map do |dep_package, dep_constraint_name|
         sorted_versions = package_versions.sort
         low = high = sorted_versions.index(version)
 
         # find version low such that all >= low share the same dep
         while low > 0 &&
-            package_deps[sorted_versions[low - 1]][dep_package_name] == dep_constraint_name
+            package_deps[sorted_versions[low - 1]][dep_package] == dep_constraint_name
           low -= 1
         end
         low =
@@ -78,7 +67,7 @@ module PubGrub
 
         # find version high such that all < high share the same dep
         while high < sorted_versions.length &&
-            package_deps[sorted_versions[high]][dep_package_name] == dep_constraint_name
+            package_deps[sorted_versions[high]][dep_package] == dep_constraint_name
           high += 1
         end
         high =
@@ -92,11 +81,9 @@ module PubGrub
 
         self_constraint = VersionConstraint.new(package, range: range)
 
-        dep_package = @packages[dep_package_name]
-
-        if !dep_package
+        if !@packages.include?(dep_package)
           # no such package -> this version is invalid
-          cause = PubGrub::Incompatibility::InvalidDependency.new(dep_package_name, dep_constraint_name)
+          cause = PubGrub::Incompatibility::InvalidDependency.new(dep_package, dep_constraint_name)
           return [Incompatibility.new([Term.new(self_constraint, true)], cause: cause)]
         end
 

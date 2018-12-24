@@ -9,10 +9,10 @@ module PubGrubAssertions
   def assert_solution(source, result, expected)
     expected = Hash[
       expected.map do |package, version|
-        [source.package(package), Gem::Version.new(version)]
+        [package, Gem::Version.new(version)]
       end
     ]
-    expected[PubGrub::Package.root] = PubGrub::Package.root_version
+    expected[PubGrub::Package.root] = 0
 
     assert_equal expected, result
   end
