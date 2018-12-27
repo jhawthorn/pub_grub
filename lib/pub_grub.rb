@@ -16,5 +16,5 @@ module PubGrub
     attr_accessor :logger
   end
   self.logger = Logger.new(STDERR)
-  self.logger.level = Logger::WARN
+  self.logger.level = $DEBUG ? Logger::DEBUG : Logger::WARN
 end
