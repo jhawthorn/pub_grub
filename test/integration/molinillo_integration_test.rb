@@ -35,7 +35,13 @@ class MolinilloIntegrationTest < Minitest::Test
     hash
   end
 
-  Dir[File.join(CASES_DIR, '*.json')].each do |case_file|
+  molinillo_cases = Dir[File.join(CASES_DIR, '*.json')].sort
+
+  if molinillo_cases.empty?
+    warn "Didn't find any molinillo test cases. You might need to run: git submodule update --init"
+  end
+
+  molinillo_cases.each do |case_file|
     case_data = JSON.parse(File.read(case_file))
 
     define_method "test_#{case_data["name"]}" do
