@@ -124,7 +124,28 @@ module PubGrub
     end
 
     def to_s
-      ranges.map(&:to_s).join(" OR ")
+      output = []
+
+      ranges = self.ranges.dup
+      while !ranges.empty?
+        ne = []
+        range = ranges.shift
+        while !ranges.empty? && ranges[0].min == range.max
+          ne << range.max
+          range = range.span(ranges.shift)
+        end
+
+        ne.map! {|x| "!= #{x}" }
+        if ne.empty?
+          output << range.to_s
+        elsif range.any?
+          output << ne.join(', ')
+        else
+          output << "#{range}, #{ne.join(', ')}"
+        end
+      end
+
+      output.join(" OR ")
     end
 
     def inspect

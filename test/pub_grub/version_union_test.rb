@@ -64,6 +64,36 @@ module PubGrub
       assert_equal expected, a.invert
     end
 
+    def test_not_equal
+      simple = union([
+        VersionRange.new(max: 3),
+        VersionRange.new(min: 3),
+      ])
+
+      assert_includes simple, 2
+      refute_includes simple, 3
+      assert_includes simple, 4
+
+      assert_equal "!= 3", simple.to_s
+
+      complex = union([
+        VersionRange.new(min: 1, max: 3),
+        VersionRange.new(min: 3, max: 5),
+        VersionRange.new(min: 5, max: 8),
+      ])
+
+      assert_includes complex, 2
+      refute_includes complex, 3
+      assert_includes complex, 4
+      refute_includes complex, 5
+      assert_includes complex, 6
+      assert_includes complex, 7
+      refute_includes complex, 8
+      refute_includes complex, 9
+
+      assert_equal "> 1, < 8, != 3, != 5", complex.to_s
+    end
+
     def test_single_overlap
       a = union([
         VersionRange.new(min: 0, max: 1),
