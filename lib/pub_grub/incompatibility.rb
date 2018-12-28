@@ -18,7 +18,7 @@ module PubGrub
       @terms = cleanup_terms(terms)
 
       if cause == :dependency && @terms.length != 2
-        raise ArgumentError, "a dependency Incompatibility must have exactly two terms. Got #{terms.inspect}"
+        raise ArgumentError, "a dependency Incompatibility must have exactly two terms. Got #{@terms.inspect}"
       end
     end
 
