@@ -95,7 +95,7 @@ module PubGrub
 
       @cached_versions = Hash.new do |h,k|
         if k == @root_package
-          h[k] = [0]
+          h[k] = [@root_version]
         else
           h[k] = all_versions_for(k)
         end
