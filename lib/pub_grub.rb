@@ -8,6 +8,7 @@ require "pub_grub/version_solver"
 require "pub_grub/incompatibility"
 require 'pub_grub/solve_failure'
 require 'pub_grub/failure_writer'
+require 'pub_grub/version'
 
 require "logger"
 
