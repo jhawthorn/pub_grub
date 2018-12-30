@@ -6,11 +6,7 @@ module PubGrub
 
     def self.normalize_ranges(ranges)
       ranges = ranges.flat_map do |range|
-        if range.is_a?(VersionUnion)
-          range.ranges
-        else
-          [range]
-        end
+        range.ranges
       end
 
       ranges.reject!(&:empty?)
@@ -64,12 +60,7 @@ module PubGrub
 
     def intersects?(other)
       my_ranges = ranges.dup
-      other_ranges =
-        if other.instance_of?(VersionRange)
-          [other]
-        else
-          other.ranges.dup
-        end
+      other_ranges = other.ranges.dup
 
       my_range = my_ranges.shift
       other_range = other_ranges.shift
@@ -88,12 +79,7 @@ module PubGrub
     alias_method :allows_any?, :intersects?
 
     def allows_all?(other)
-      other_ranges =
-        if other.is_a?(VersionUnion)
-          other.ranges
-        else
-          [other]
-        end
+      other_ranges = other.ranges
 
       other_ranges.all? do |other_range|
         ranges.any? do |range|

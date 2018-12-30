@@ -75,6 +75,10 @@ module PubGrub
       end
     end
 
+    def ranges
+      [self]
+    end
+
     def include?(version)
       compare_version(version) == 0
     end
