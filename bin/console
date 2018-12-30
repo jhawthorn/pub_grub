@@ -2,6 +2,7 @@
 
 require "bundler/setup"
 require "pub_grub"
+require "pub_grub/rubygems"
 
 source =
   PubGrub::StaticPackageSource.new do |s|
@@ -11,11 +12,11 @@ source =
 
     s.add "bar", "2.0.0"
     s.add "bar", "1.0.0"
+
+    s.root deps: { "foo" => ">= 0" }
   end
 
-foo = source.get_package("foo")
-bar = source.get_package("bar")
-
+root = PubGrub::Package.root
 solver = PubGrub::VersionSolver.new(source: source)
 
 require 'irb'
