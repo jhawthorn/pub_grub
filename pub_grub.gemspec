@@ -2,9 +2,11 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require "pub_grub/version"
+
 Gem::Specification.new do |spec|
   spec.name          = "pub_grub"
-  spec.version       = "0.4.2"
+  spec.version       = PubGrub::VERSION
   spec.authors       = ["John Hawthorn"]
   spec.email         = ["john@hawthorn.email"]
 
