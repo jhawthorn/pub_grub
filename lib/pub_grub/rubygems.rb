@@ -1,5 +1,3 @@
-require 'rubygems/requirement'
-
 module PubGrub
   module RubyGems
     extend self
@@ -8,7 +6,7 @@ module PubGrub
       ranges = requirement.requirements.map do |(op, ver)|
         case op
         when "~>"
-          bump = Gem::Version.new(ver.bump.to_s + ".A")
+          bump = ver.class.new(ver.bump.to_s + ".A")
           VersionRange.new(min: ver, max: bump, include_min: true)
         when ">"
           VersionRange.new(min: ver)
