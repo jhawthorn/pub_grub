@@ -79,6 +79,16 @@ module PubGrub
       dependencies_for(@root_package, @root_version)
     end
 
+    # Override me (maybe)
+    #
+    # If not overridden, the order returned by all_versions_for will be used
+    #
+    # Returns: Array of versions in preferred order
+    def sort_versions_by_preferred(package, sorted_versions)
+      indexes = @version_indexes[package]
+      sorted_versions.sort_by { |version| indexes[version] }
+    end
+
     def initialize
       @root_package = Package.root
       @root_version = Package.root_version
@@ -91,6 +101,7 @@ module PubGrub
         end
       end
       @sorted_versions = Hash.new { |h,k| h[k] = @cached_versions[k].sort }
+      @version_indexes = Hash.new { |h,k| h[k] = @cached_versions[k].each.with_index.to_h }
 
       @cached_dependencies = Hash.new do |packages, package|
         if package == @root_package
@@ -106,9 +117,8 @@ module PubGrub
     end
 
     def versions_for(package, range=VersionRange.any)
-      @cached_versions[package].select do |version|
-        range.include?(version)
-      end
+      versions = range.select_versions(@sorted_versions[package])
+      sort_versions_by_preferred(package, versions)
     end
 
     def incompatibilities_for(package, version)
