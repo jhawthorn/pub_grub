@@ -49,7 +49,7 @@ module PubGrub
       assert_term_relation :subset, '1.0.0', '>= 0'
       assert_term_relation :subset, '1.1.0', '>= 0'
       assert_term_relation :subset, '2.0.0', '>= 0'
-      assert_term_relation :subset, '!= 1.1.0', '>= 0'
+      assert_term_relation :subset, ['!= 1.1.0', '>= 0'], '>= 0'
 
       assert_term_relation :disjoint, '< 1.1', '> 1.1'
       assert_term_relation :disjoint, '< 1.1', '>= 1.1'

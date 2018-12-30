@@ -74,7 +74,7 @@ module PubGrub
 
     def test_difference
       a = parse(@package, [">= 1"])
-      b = parse(@package, ["~> 1"])
+      b = parse(@package, ["< 2"])
 
       constraint = a.difference(b)
 

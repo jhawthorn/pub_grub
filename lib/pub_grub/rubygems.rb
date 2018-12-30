@@ -8,16 +8,12 @@ module PubGrub
       ranges = requirement.requirements.map do |(op, ver)|
         case op
         when "~>"
-          # TODO: not sure this is correct for prereleases
-          VersionRange.new(min: ver, max: ver.bump, include_min: true)
+          bump = Gem::Version.new(ver.bump.to_s + ".A")
+          VersionRange.new(min: ver, max: bump, include_min: true)
         when ">"
           VersionRange.new(min: ver)
         when ">="
-          if ver == Gem::Version.new("0")
-            VersionRange.any
-          else
-            VersionRange.new(min: ver, include_min: true)
-          end
+          VersionRange.new(min: ver, include_min: true)
         when "<"
           VersionRange.new(max: ver)
         when "<="

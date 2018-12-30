@@ -315,7 +315,7 @@ module PubGrub
       return ["#{min}"] if min == max
 
       # FIXME: remove this
-      if min && max && include_min && !include_max && min.respond_to?(:bump) && min.bump == max
+      if min && max && include_min && !include_max && min.respond_to?(:bump) && (min.bump.to_s + ".A") == max.to_s
         return ["~> #{min}"]
       end
 
