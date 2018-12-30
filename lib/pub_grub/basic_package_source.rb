@@ -118,7 +118,14 @@ module PubGrub
 
     def versions_for(package, range=VersionRange.any)
       versions = range.select_versions(@sorted_versions[package])
-      sort_versions_by_preferred(package, versions)
+
+      # Conditional avoids (among other things) calling
+      # sort_versions_by_preferred with the root package
+      if versions.size > 1
+        sort_versions_by_preferred(package, versions)
+      else
+        versions
+      end
     end
 
     def incompatibilities_for(package, version)
