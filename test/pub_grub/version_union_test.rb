@@ -93,6 +93,18 @@ module PubGrub
 
       assert_equal "!= 3", simple.to_s
 
+      two = union([
+        VersionRange.new(max: 3),
+        VersionRange.new(min: 3, max: 5),
+        VersionRange.new(min: 5),
+      ])
+
+      assert_includes two, 2
+      refute_includes two, 3
+      assert_includes two, 4
+
+      assert_equal "!= 3, != 5", two.to_s
+
       complex = union([
         VersionRange.new(min: 1, max: 3),
         VersionRange.new(min: 3, max: 5),
