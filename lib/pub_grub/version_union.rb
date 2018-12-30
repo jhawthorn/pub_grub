@@ -27,8 +27,8 @@ module PubGrub
       ranges
     end
 
-    def self.union(ranges)
-      ranges = normalize_ranges(ranges)
+    def self.union(ranges, normalize: true)
+      ranges = normalize_ranges(ranges) if normalize
 
       if ranges.size == 0
         VersionRange.empty
@@ -98,7 +98,10 @@ module PubGrub
 
     def intersect(other)
       new_ranges = ranges.map{ |r| r.intersect(other) }
-      VersionUnion.union(new_ranges)
+      new_ranges = new_ranges.flat_map { |r| r.ranges }
+      new_ranges.reject!(&:empty?)
+
+      VersionUnion.union(new_ranges, normalize: false)
     end
 
     def invert
