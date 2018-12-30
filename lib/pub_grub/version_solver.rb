@@ -37,9 +37,9 @@ module PubGrub
       propagate(next_package)
 
       if solved?
-        logger.info "Solution found after #{solution.attempted_solutions} attempts:"
+        logger.info { "Solution found after #{solution.attempted_solutions} attempts:" }
         solution.decisions.each do |package, version|
-          logger.info "* #{package} #{version}"
+          logger.info { "* #{package} #{version}" }
         end
 
         false
@@ -92,7 +92,7 @@ module PubGrub
         return :conflict
       end
 
-      logger.debug("derived: #{unsatisfied.invert}")
+      logger.debug { "derived: #{unsatisfied.invert}" }
 
       solution.derive(unsatisfied.invert, incompatibility)
 
@@ -135,7 +135,7 @@ module PubGrub
       end
 
       unless conflict
-        logger.info("selecting #{package} #{version}")
+        logger.info { "selecting #{package} #{version}" }
 
         solution.decide(package, version)
       end
@@ -144,7 +144,7 @@ module PubGrub
     end
 
     def resolve_conflict(incompatibility)
-      logger.info "conflict: #{incompatibility}"
+      logger.info { "conflict: #{incompatibility}" }
 
       new_incompatibility = false
 
@@ -184,7 +184,7 @@ module PubGrub
         if previous_level < most_recent_satisfier.decision_level ||
             most_recent_satisfier.decision?
 
-          logger.info "backtracking to #{previous_level}"
+          logger.info { "backtracking to #{previous_level}" }
           solution.backtrack(previous_level)
 
           if new_incompatibility
@@ -208,16 +208,16 @@ module PubGrub
         new_incompatibility = true
 
         partially = difference ? " partially" : ""
-        logger.info "! #{most_recent_term} is#{partially} satisfied by #{most_recent_satisfier.term}"
-        logger.info "! which is caused by #{most_recent_satisfier.cause}"
-        logger.info "! thus #{incompatibility}"
+        logger.info { "! #{most_recent_term} is#{partially} satisfied by #{most_recent_satisfier.term}" }
+        logger.info { "! which is caused by #{most_recent_satisfier.cause}" }
+        logger.info { "! thus #{incompatibility}" }
       end
 
       raise SolveFailure.new(incompatibility)
     end
 
     def add_incompatibility(incompatibility)
-      logger.debug("fact: #{incompatibility}");
+      logger.debug { "fact: #{incompatibility}" }
       incompatibility.terms.each do |term|
         package = term.package
         @incompatibilities[package] << incompatibility
