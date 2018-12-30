@@ -26,6 +26,23 @@ module PubGrub
       assert_equal VersionRange.new(min: 0, max: 4), a
     end
 
+    def test_merge_included_overlap
+      a = union([
+        VersionRange.new(min: 0, max: 2),
+        VersionRange.new(min: 3, max: 5),
+        VersionRange.new(min: 3, max: 4, include_min: true)
+      ])
+
+      assert_equal "> 0, < 2 OR >= 3, < 5", a.to_s
+
+      refute_includes a, 0
+      assert_includes a, 1
+      refute_includes a, 2
+      assert_includes a, 3
+      assert_includes a, 4
+      refute_includes a, 5
+    end
+
     def test_merge_contiguous
       a = union([
         VersionRange.new(min: 2, max: 4),

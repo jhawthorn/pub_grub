@@ -18,7 +18,7 @@ module PubGrub
       return [] if ranges.empty?
 
       mins, ranges = ranges.partition { |r| !r.min }
-      original_ranges = mins + ranges.sort_by { |r| [r.include_min ? 0 : 1, r.min] }
+      original_ranges = mins + ranges.sort_by { |r| [r.min, r.include_min ? 0 : 1] }
       ranges = [original_ranges.shift]
       original_ranges.each do |range|
         if ranges.last.contiguous_to?(range)
