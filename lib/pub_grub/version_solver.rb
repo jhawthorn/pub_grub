@@ -111,10 +111,10 @@ module PubGrub
       unsatisfied_term, versions =
         unsatisfied.map do |term|
           range = term.constraint.range
+          versions = source.versions_for(term.package, range)
+          puts "  #{versions.size} versions remain for #{term.package}"
           [term, source.versions_for(term.package, range)]
-        end.min_by do |(_, v)|
-          v.count
-        end
+        end.first
 
       package = unsatisfied_term.package
       version = versions.first
