@@ -18,6 +18,8 @@ module PubGrub
 
       @solution = PartialSolution.new
 
+      @package_depth = { root => 0 }
+
       add_incompatibility Incompatibility.new([
         Term.new(VersionConstraint.any(root), false)
       ], cause: :root)
@@ -100,24 +102,24 @@ module PubGrub
       unsatisfied.package
     end
 
-    def choose_package_version
-      unsatisfied = solution.unsatisfied
+    def next_package_to_try
+      solution.unsatisfied.min_by do |term|
+        package = term.package
+        versions = source.versions_for(package, term.constraint.range)
 
-      if unsatisfied.empty?
+        [@package_depth[package], versions.count]
+      end.package
+    end
+
+    def choose_package_version
+      if solution.unsatisfied.empty?
         logger.info "No packages unsatisfied. Solving complete!"
         return nil
       end
 
-      unsatisfied_term, versions =
-        unsatisfied.map do |term|
-          range = term.constraint.range
-          versions = source.versions_for(term.package, range)
-          puts "  #{versions.size} versions remain for #{term.package}"
-          [term, source.versions_for(term.package, range)]
-        end.first
-
-      package = unsatisfied_term.package
-      version = versions.first
+      package = next_package_to_try
+      unsatisfied_term = solution.unsatisfied.find { |t| t.package == package }
+      version = source.versions_for(package, unsatisfied_term.constraint.range).first
 
       if version.nil?
         cause = Incompatibility::NoVersions.new(unsatisfied_term)
@@ -132,6 +134,12 @@ module PubGrub
 
         conflict ||= incompatibility.terms.all? do |term|
           term.package == package || solution.satisfies?(term)
+        end
+
+        # Update depths of new packages
+        depth = @package_depth[package] + 1
+        incompatibility.terms.each do |term|
+          @package_depth[term.package] ||= depth
         end
       end
 
