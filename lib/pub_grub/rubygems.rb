@@ -6,8 +6,9 @@ module PubGrub
       ranges = requirement.requirements.map do |(op, ver)|
         case op
         when "~>"
+          name = "~> #{ver}"
           bump = ver.class.new(ver.bump.to_s + ".A")
-          VersionRange.new(min: ver, max: bump, include_min: true)
+          VersionRange.new(name: name, min: ver, max: bump, include_min: true)
         when ">"
           VersionRange.new(min: ver)
         when ">="

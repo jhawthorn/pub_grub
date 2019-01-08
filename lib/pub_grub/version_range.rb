@@ -60,11 +60,12 @@ module PubGrub
       new
     end
 
-    def initialize(min: nil, max: nil, include_min: false, include_max: false)
+    def initialize(min: nil, max: nil, include_min: false, include_max: false, name: nil)
       @min = min
       @max = max
       @include_min = include_min
       @include_max = include_max
+      @name = name
 
       if min && max
         if min > max
@@ -338,7 +339,7 @@ module PubGrub
     end
 
     def to_s
-      constraints.join(", ")
+      @name ||= constraints.join(", ")
     end
 
     def inspect

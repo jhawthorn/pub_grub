@@ -317,5 +317,31 @@ module PubGrub
       range = VersionRange.new(min: 2, max: nil)
       assert_equal [], range.select_versions(versions)
     end
+
+    def test_equality
+      a = VersionRange.new(min: 2, max: nil)
+      b = VersionRange.new(min: 2, max: nil)
+      assert_equal a, a
+      assert_equal a, b
+      assert_equal b, a
+      assert_equal b, b
+
+      a = VersionRange.new(min: 2, max: nil)
+      b = VersionRange.new(min: 2, max: nil, include_min: true)
+      assert_equal a, a
+      refute_equal a, b
+      refute_equal b, a
+      assert_equal b, b
+    end
+
+    def test_named_version_range_equality
+      a = VersionRange.new(min: 2, max: nil)
+      b = VersionRange.new(name: "more than two", min: 2, max: nil)
+      assert_equal "more than two", b.to_s
+      assert_equal a, a
+      assert_equal a, b
+      assert_equal b, a
+      assert_equal b, b
+    end
   end
 end
