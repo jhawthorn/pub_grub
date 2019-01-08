@@ -35,8 +35,8 @@ module PubGrub
         false
       end
 
-      def constraints
-        ["(no versions)"]
+      def to_s
+        "(no versions)"
       end
 
       def ==(other)
@@ -315,16 +315,6 @@ module PubGrub
       true
     end
 
-    def constraints
-      return ["any"] if any?
-      return ["= #{min}"] if min == max
-
-      c = []
-      c << "#{include_min ? ">=" : ">"} #{min}" if min
-      c << "#{include_max ? "<=" : "<"} #{max}" if max
-      c
-    end
-
     def any?
       !min && !max
     end
@@ -363,5 +353,18 @@ module PubGrub
         include_min == other.include_min &&
         include_max == other.include_max
     end
+
+    private
+
+    def constraints
+      return ["any"] if any?
+      return ["= #{min}"] if min == max
+
+      c = []
+      c << "#{include_min ? ">=" : ">"} #{min}" if min
+      c << "#{include_max ? "<=" : "<"} #{max}" if max
+      c
+    end
+
   end
 end
