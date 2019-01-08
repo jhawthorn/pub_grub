@@ -35,7 +35,7 @@ module PubGrub
 
       term = a.intersect(b)
 
-      assert_equal "not pkg 1.0.0 OR 2.0.0", term.to_s
+      assert_equal "not pkg = 1.0.0 OR = 2.0.0", term.to_s
       refute term.empty?
     end
 
