@@ -52,8 +52,10 @@ module PubGrub
       end
     end
 
+    EMPTY = Empty.new
+
     def self.empty
-      Empty.new
+      EMPTY
     end
 
     def self.any
