@@ -23,6 +23,10 @@ module PubGrub
         false
       end
 
+      def intersect(other)
+        self
+      end
+
       def allows_all?(other)
         other.empty?
       end
@@ -168,7 +172,7 @@ module PubGrub
     alias_method :allows_any?, :intersects?
 
     def intersect(other)
-      return self.class.empty unless intersects?(other)
+      return other if other.empty?
       return other.intersect(self) if other.is_a?(VersionUnion)
 
       min_range =
@@ -202,6 +206,18 @@ module PubGrub
             other
           end
         end
+
+      if !min_range.equal?(max_range) && min_range.min && max_range.max
+        case min_range.min <=> max_range.max
+        when -1
+        when 0
+          if !min_range.include_min || !max_range.include_max
+            return EMPTY
+          end
+        when 1
+          return EMPTY
+        end
+      end
 
       VersionRange.new(
         min: min_range.min,
