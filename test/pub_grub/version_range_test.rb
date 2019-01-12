@@ -15,7 +15,6 @@ module PubGrub
       range = VersionRange.new(min: 5)
 
       assert_equal "> 5", range.to_s
-      assert_equal ["> 5"], range.constraints
 
       refute_includes range, 4
       refute_includes range, 5
@@ -26,7 +25,6 @@ module PubGrub
       range = VersionRange.new(min: 5, include_min: true)
 
       assert_equal ">= 5", range.to_s
-      assert_equal [">= 5"], range.constraints
 
       refute_includes range, 4
       assert_includes range, 5
@@ -40,7 +38,6 @@ module PubGrub
       range = VersionRange.new(max: 7)
 
       assert_equal "< 7", range.to_s
-      assert_equal ["< 7"], range.constraints
 
       assert_includes range, 6
       refute_includes range, 7
@@ -51,7 +48,6 @@ module PubGrub
       range = VersionRange.new(max: 7, include_max: true)
 
       assert_equal "<= 7", range.to_s
-      assert_equal ["<= 7"], range.constraints
 
       assert_includes range, 6
       assert_includes range, 7
@@ -65,7 +61,6 @@ module PubGrub
       range = VersionRange.new(min: 5, max: 7)
 
       assert_equal "> 5, < 7", range.to_s
-      assert_equal ["> 5", "< 7"], range.constraints
 
       refute_includes range, 4
       refute_includes range, 5
@@ -78,7 +73,6 @@ module PubGrub
       range = VersionRange.new(min: 5, max: 7, include_min: true)
 
       assert_equal ">= 5, < 7", range.to_s
-      assert_equal [">= 5", "< 7"], range.constraints
 
       refute_includes range, 4
       assert_includes range, 5
@@ -91,7 +85,6 @@ module PubGrub
       range = VersionRange.new(min: 5, max: 7, include_max: true)
 
       assert_equal "> 5, <= 7", range.to_s
-      assert_equal ["> 5", "<= 7"], range.constraints
 
       refute_includes range, 4
       refute_includes range, 5
@@ -104,7 +97,6 @@ module PubGrub
       range = VersionRange.new(min: 5, max: 7, include_min: true, include_max: true)
 
       assert_equal ">= 5, <= 7", range.to_s
-      assert_equal [">= 5", "<= 7"], range.constraints
 
       refute_includes range, 4
       assert_includes range, 5
