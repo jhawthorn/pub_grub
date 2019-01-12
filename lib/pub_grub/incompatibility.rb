@@ -22,6 +22,15 @@ module PubGrub
       end
     end
 
+    def hash
+      [cause, terms].hash
+    end
+
+    def eql?(other)
+      cause.eql?(other.cause) &&
+        terms.eql?(other.terms)
+    end
+
     def failure?
       terms.empty? || (terms.length == 1 && terms[0].package == Package.root && terms[0].positive?)
     end
