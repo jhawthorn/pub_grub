@@ -211,7 +211,7 @@ module PubGrub
           end
         end
 
-      self.class.new(
+      VersionRange.new(
         min: min_range.min,
         include_min: min_range.include_min,
         max: max_range.max,
@@ -258,7 +258,7 @@ module PubGrub
           end
         end
 
-      self.class.new(
+      VersionRange.new(
         min: min_range.min,
         include_min: min_range.include_min,
         max: max_range.max,
