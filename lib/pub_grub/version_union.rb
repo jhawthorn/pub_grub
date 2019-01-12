@@ -44,6 +44,14 @@ module PubGrub
       @ranges = ranges
     end
 
+    def hash
+      ranges.hash
+    end
+
+    def eql?(other)
+      ranges.eql?(other.ranges)
+    end
+
     def include?(version)
       !!ranges.bsearch {|r| r.compare_version(version) }
     end

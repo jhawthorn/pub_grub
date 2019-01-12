@@ -11,6 +11,15 @@ module PubGrub
       @range = range
     end
 
+    def hash
+      [package, range.to_s].hash
+    end
+
+    def eql?(other)
+      package.eql?(other.package) &&
+        range.eql?(other.range)
+    end
+
     class << self
       def exact(package, version)
         range = VersionRange.new(min: version, max: version, include_min: true, include_max: true)

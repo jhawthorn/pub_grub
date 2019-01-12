@@ -19,6 +19,10 @@ module PubGrub
         true
       end
 
+      def eql?
+        other.empty?
+      end
+
       def intersects?(_)
         false
       end
@@ -72,6 +76,17 @@ module PubGrub
       @include_min = include_min
       @include_max = include_max
       @name = name
+    end
+
+    def hash
+      [min, max, include_min, include_max].hash
+    end
+
+    def eql?(other)
+      min.eql?(other.min) &&
+        max.eql?(other.max) &&
+        include_min.eql?(other.include_min) &&
+        include_max.eql?(other.include_max)
     end
 
     def ranges

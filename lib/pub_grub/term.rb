@@ -18,6 +18,15 @@ module PubGrub
       end
     end
 
+    def hash
+      [@constraint, @positive].hash
+    end
+
+    def eql?(other)
+      positive == other.positive &&
+        constraint.eql?(other.constraint)
+    end
+
     def invert
       self.class.new(@constraint, !@positive)
     end
