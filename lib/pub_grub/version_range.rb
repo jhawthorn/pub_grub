@@ -68,14 +68,6 @@ module PubGrub
       @include_min = include_min
       @include_max = include_max
       @name = name
-
-      if min && max
-        if min > max
-          raise ArgumentError, "min version #{min} must be less than max #{max}"
-        elsif min == max && (!include_min || !include_max)
-          raise ArgumentError, "include_min and include_max must be true when min == max"
-        end
-      end
     end
 
     def ranges
