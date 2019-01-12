@@ -97,10 +97,22 @@ module PubGrub
     end
 
     def intersect(other)
-      new_ranges = ranges.map{ |r| r.intersect(other) }
-      new_ranges = new_ranges.flat_map { |r| r.ranges }
-      new_ranges.reject!(&:empty?)
+      my_ranges = ranges.dup
+      other_ranges = other.ranges.dup
+      new_ranges = []
 
+      my_range = my_ranges.shift
+      other_range = other_ranges.shift
+      while my_range && other_range
+        new_ranges << my_range.intersect(other_range)
+
+        if !my_range.max || (other_range.max && other_range.max < my_range.max)
+          other_range = other_ranges.shift
+        else
+          my_range = my_ranges.shift
+        end
+      end
+      new_ranges.reject!(&:empty?)
       VersionUnion.union(new_ranges, normalize: false)
     end
 
