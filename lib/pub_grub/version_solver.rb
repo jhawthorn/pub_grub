@@ -132,7 +132,10 @@ module PubGrub
       conflict = false
 
       source.incompatibilities_for(package, version).each do |incompatibility|
-        next if @seen_incompatibilities.include?(incompatibility)
+        if @seen_incompatibilities.include?(incompatibility)
+          logger.debug { "knew: #{incompatibility}" }
+          next
+        end
         @seen_incompatibilities.add(incompatibility)
 
         add_incompatibility incompatibility
