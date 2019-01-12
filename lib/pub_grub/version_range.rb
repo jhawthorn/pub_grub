@@ -288,7 +288,7 @@ module PubGrub
       return true if other.empty?
 
       if other.is_a?(VersionUnion)
-        return other.ranges.all? { |r| allows_all?(r) }
+        return VersionUnion.new([self]).allows_all?(other)
       end
 
       return false if max && !other.max

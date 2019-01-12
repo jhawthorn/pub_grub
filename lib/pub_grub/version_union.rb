@@ -79,12 +79,17 @@ module PubGrub
     alias_method :allows_any?, :intersects?
 
     def allows_all?(other)
-      other_ranges = other.ranges
+      my_ranges = ranges.dup
 
-      other_ranges.all? do |other_range|
-        ranges.any? do |range|
-          range.allows_all?(other_range)
+      my_range = my_ranges.shift
+
+      other.ranges.all? do |other_range|
+        while my_range
+          break if my_range.allows_all?(other_range)
+          my_range = my_ranges.shift
         end
+
+        !!my_range
       end
     end
 
