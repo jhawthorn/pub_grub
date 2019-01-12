@@ -23,7 +23,7 @@ module PubGrub
     end
 
     def hash
-      [cause, terms].hash
+      cause.hash ^ terms.hash
     end
 
     def eql?(other)

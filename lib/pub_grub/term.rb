@@ -19,7 +19,7 @@ module PubGrub
     end
 
     def hash
-      [@constraint, @positive].hash
+      constraint.hash ^ positive.hash
     end
 
     def eql?(other)

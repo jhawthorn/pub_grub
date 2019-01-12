@@ -79,7 +79,7 @@ module PubGrub
     end
 
     def hash
-      [min, max, include_min, include_max].hash
+      min.hash ^ max.hash ^ include_min.hash ^ include_max.hash
     end
 
     def eql?(other)

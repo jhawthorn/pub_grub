@@ -12,7 +12,7 @@ module PubGrub
     end
 
     def hash
-      [package, range.to_s].hash
+      package.hash ^ range.hash
     end
 
     def eql?(other)
