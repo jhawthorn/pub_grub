@@ -16,6 +16,8 @@ module PubGrub
         h[k] = []
       end
 
+      @seen_incompatibilities = Set.new
+
       @solution = PartialSolution.new
 
       @package_depth = { root => 0 }
@@ -130,6 +132,9 @@ module PubGrub
       conflict = false
 
       source.incompatibilities_for(package, version).each do |incompatibility|
+        next if @seen_incompatibilities.include?(incompatibility)
+        @seen_incompatibilities.add(incompatibility)
+
         add_incompatibility incompatibility
 
         conflict ||= incompatibility.terms.all? do |term|
