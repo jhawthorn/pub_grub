@@ -21,7 +21,8 @@ module PubGrub
       package = term.package
       return :overlap if !@terms.key?(package)
 
-      @terms[package].relation(term)
+      @relation_cache[package][term] ||=
+        @terms[package].relation(term)
     end
 
     def satisfies?(term)
@@ -92,6 +93,7 @@ module PubGrub
 
       # { Package => Term }
       @terms = {}
+      @relation_cache = Hash.new { |h,k| h[k] = {} }
 
       # { Package => Boolean }
       @required = Set.new
@@ -112,6 +114,7 @@ module PubGrub
       else
         @terms[package] = term
       end
+      @relation_cache[package].clear
 
       @cumulative_assignments[assignment] = @terms[package]
     end
