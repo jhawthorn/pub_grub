@@ -33,21 +33,12 @@ module PubGrub
     end
 
     def satisfier(term)
-      assigned_term = nil
-
-      @assignments_by[term.package].each do |assignment|
-        if assigned_term
-          assigned_term = assigned_term.intersect(assignment.term)
-        else
-          assigned_term = assignment.term
+      assignment =
+        @assignments_by[term.package].bsearch do |assignment|
+          @cumulative_assignments[assignment].satisfies?(term)
         end
 
-        if assigned_term.satisfies?(term)
-          return assignment
-        end
-      end
-
-      raise "#{term} unsatisfied"
+      assignment || raise("#{term} unsatisfied")
     end
 
     # A list of unsatisfied terms
@@ -94,6 +85,7 @@ module PubGrub
 
       # { Package => Array<Assignment> }
       @assignments_by = Hash.new { |h,k| h[k] = [] }
+      @cumulative_assignments = {}.compare_by_identity
 
       # { Package => Package::Version }
       @decisions = {}
@@ -120,6 +112,8 @@ module PubGrub
       else
         @terms[package] = term
       end
+
+      @cumulative_assignments[assignment] = @terms[package]
     end
   end
 end
