@@ -106,11 +106,11 @@ module PubGrub
     end
 
     def add_assignment(assignment)
-      @assignments << assignment
-      @assignments_by[assignment.term.package] << assignment
-
       term = assignment.term
       package = term.package
+
+      @assignments << assignment
+      @assignments_by[package] << assignment
 
       @required.add(package) if term.positive?
 
@@ -118,7 +118,7 @@ module PubGrub
         old_term = @terms[package]
         @terms[package] = old_term.intersect(term)
       else
-        @terms[term.package] = term
+        @terms[package] = term
       end
     end
   end
