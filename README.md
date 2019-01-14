@@ -2,7 +2,7 @@
 
 # PubGrub
 
-An attempt to implement [Natalie Weizenbaum's PubGrub](https://medium.com/@nex3/pubgrub-2fb6470504f), a next-generation version solving algorithm, in Ruby.
+A ruby implementation of [Natalie Weizenbaum's PubGrub](https://medium.com/@nex3/pubgrub-2fb6470504f), a next-generation version solving algorithm.
 
 ## Development
 
