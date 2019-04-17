@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{A version solver based on dart's PubGrub}
   spec.description   = %q{A version solver based on dart's PubGrub}
-  spec.homepage      = "https://github.com/jhawthorn/pubgrub"
+  spec.homepage      = "https://github.com/jhawthorn/pub_grub"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
