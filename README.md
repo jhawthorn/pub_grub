@@ -4,6 +4,28 @@
 
 A ruby implementation of [Natalie Weizenbaum's PubGrub](https://medium.com/@nex3/pubgrub-2fb6470504f), a next-generation version solving algorithm.
 
+It's currently used in the [gel](https://github.com/gel-rb/gel) package manager.
+
+## Usage
+
+Most users will want to implement their own package source class. See [basic_package_source.rb](https://github.com/jhawthorn/pub_grub/blob/master/lib/pub_grub/basic_package_source.rb) for docs, and the sources from [gel](https://github.com/gel-rb/gel/blob/master/lib/gel/pub_grub/source.rb) and [bundler-explain](https://github.com/jhawthorn/bundler-explain/blob/master/lib/bundler/explain/source.rb) as examples.
+
+A basic example using the built-in StaticPackageSource
+
+``` ruby
+source = PubGrub::StaticPackageSource.new do |s|
+  s.add 'foo', '2.0.0', deps: { 'bar' => '1.0.0' }
+  s.add 'foo', '1.0.0'
+  
+  s.add 'bar', '1.0.0', deps: { 'foo' => '1.0.0' }
+  
+  s.root deps: { 'foo' => '>= 1.0.0' }
+end
+
+solver = PubGrub::VersionSolver.new(source: source)
+solver.solve # => {#<PubGrub::Package :root>=>0, "foo"=>#<Gem::Version "1.0.0">}
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
