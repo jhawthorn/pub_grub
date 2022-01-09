@@ -10,12 +10,22 @@ require 'pub_grub/solve_failure'
 require 'pub_grub/failure_writer'
 require 'pub_grub/version'
 
-require "logger"
-
 module PubGrub
   class << self
-    attr_accessor :logger
+    attr_writer :logger
+
+    def logger
+      @logger || default_logger
+    end
+
+    private
+
+    def default_logger
+      require "logger"
+
+      logger = ::Logger.new(STDERR)
+      logger.level = $DEBUG ? ::Logger::DEBUG : ::Logger::WARN
+      @logger = logger
+    end
   end
-  self.logger = Logger.new(STDERR)
-  self.logger.level = $DEBUG ? Logger::DEBUG : Logger::WARN
 end
