@@ -1,5 +1,4 @@
 require 'pub_grub/assignment'
-require 'set'
 
 module PubGrub
   class PartialSolution
@@ -44,7 +43,7 @@ module PubGrub
 
     # A list of unsatisfied terms
     def unsatisfied
-      @required.reject do |package|
+      @required.keys.reject do |package|
         @decisions.key?(package)
       end.map do |package|
         @terms[package]
@@ -96,7 +95,7 @@ module PubGrub
       @relation_cache = Hash.new { |h,k| h[k] = {} }
 
       # { Package => Boolean }
-      @required = Set.new
+      @required = {}
     end
 
     def add_assignment(assignment)
@@ -106,7 +105,7 @@ module PubGrub
       @assignments << assignment
       @assignments_by[package] << assignment
 
-      @required.add(package) if term.positive?
+      @required[package] = true if term.positive?
 
       if @terms.key?(package)
         old_term = @terms[package]

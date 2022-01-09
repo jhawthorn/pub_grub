@@ -16,7 +16,7 @@ module PubGrub
         h[k] = []
       end
 
-      @seen_incompatibilities = Set.new
+      @seen_incompatibilities = {}
 
       @solution = PartialSolution.new
 
@@ -136,7 +136,7 @@ module PubGrub
           logger.debug { "knew: #{incompatibility}" }
           next
         end
-        @seen_incompatibilities.add(incompatibility)
+        @seen_incompatibilities[incompatibility] = true
 
         add_incompatibility incompatibility
 
