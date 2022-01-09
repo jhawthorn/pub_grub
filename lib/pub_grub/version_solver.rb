@@ -5,10 +5,13 @@ require 'pub_grub/solve_failure'
 
 module PubGrub
   class VersionSolver
+    attr_reader :logger
     attr_reader :source
     attr_reader :solution
 
-    def initialize(source:, root: Package.root)
+    def initialize(source:, root: Package.root, logger: PubGrub.logger)
+      @logger = logger
+
       @source = source
 
       # { package => [incompatibility, ...]}
@@ -16,7 +19,7 @@ module PubGrub
         h[k] = []
       end
 
-      @seen_incompatibilities = Set.new
+      @seen_incompatibilities = {}
 
       @solution = PartialSolution.new
 
@@ -136,7 +139,7 @@ module PubGrub
           logger.debug { "knew: #{incompatibility}" }
           next
         end
-        @seen_incompatibilities.add(incompatibility)
+        @seen_incompatibilities[incompatibility] = true
 
         add_incompatibility incompatibility
 
@@ -239,10 +242,6 @@ module PubGrub
         package = term.package
         @incompatibilities[package] << incompatibility
       end
-    end
-
-    def logger
-      PubGrub.logger
     end
   end
 end

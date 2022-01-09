@@ -1,5 +1,3 @@
-require 'forwardable'
-
 module PubGrub
   class Term
     attr_reader :package, :constraint, :positive
