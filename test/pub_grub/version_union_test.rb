@@ -52,6 +52,18 @@ module PubGrub
       assert_equal VersionRange.new(min: 2, max: 6), a
     end
 
+    def test_eql
+      a = union([
+        VersionRange.new(min: 1, max: 3),
+        VersionRange.new(min: 4, max: 7),
+      ])
+
+      assert_operator a, :eql?, a
+      refute_operator a.ranges.first, :eql?, a
+      refute_operator a, :eql?, a.ranges.first
+      assert_operator a, :eql?, union(a.ranges)
+    end
+
     def test_simple
       a = union([
         VersionRange.new(min: 1, max: 3),
