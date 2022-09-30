@@ -1,4 +1,4 @@
-require 'pub_grub/assignment'
+require_relative 'assignment'
 
 module PubGrub
   class PartialSolution

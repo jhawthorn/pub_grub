@@ -1,7 +1,7 @@
-require 'pub_grub/package'
-require 'pub_grub/version_constraint'
-require 'pub_grub/incompatibility'
-require 'pub_grub/basic_package_source'
+require_relative 'package'
+require_relative 'version_constraint'
+require_relative 'incompatibility'
+require_relative 'basic_package_source'
 
 module PubGrub
   class StaticPackageSource < BasicPackageSource

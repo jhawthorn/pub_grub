@@ -1,4 +1,4 @@
-require 'pub_grub/failure_writer'
+require_relative 'failure_writer'
 
 module PubGrub
   class SolveFailure < StandardError
