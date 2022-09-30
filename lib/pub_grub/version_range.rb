@@ -129,7 +129,7 @@ module PubGrub
       ]
     end
 
-    # Returns verisons which are included by this range.
+    # Returns versions which are included by this range.
     #
     # versions must be sorted
     def select_versions(versions)
