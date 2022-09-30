@@ -1,4 +1,4 @@
-require 'pub_grub/version_range'
+require_relative 'version_range'
 
 module PubGrub
   class VersionConstraint

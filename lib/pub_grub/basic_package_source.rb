@@ -1,5 +1,5 @@
-require 'pub_grub/version_constraint'
-require 'pub_grub/incompatibility'
+require_relative 'version_constraint'
+require_relative 'incompatibility'
 
 module PubGrub
   # Types:

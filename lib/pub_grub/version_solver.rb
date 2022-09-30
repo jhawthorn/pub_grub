@@ -1,7 +1,7 @@
-require 'pub_grub/partial_solution'
-require 'pub_grub/term'
-require 'pub_grub/incompatibility'
-require 'pub_grub/solve_failure'
+require_relative 'partial_solution'
+require_relative 'term'
+require_relative 'incompatibility'
+require_relative 'solve_failure'
 
 module PubGrub
   class VersionSolver
