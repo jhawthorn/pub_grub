@@ -198,6 +198,8 @@ module PubGrub
 
       assert_equal VersionRange.any, empty.invert
       assert_equal empty, VersionRange.any.invert
+
+      assert empty.hash
     end
 
     def test_contiguous_to

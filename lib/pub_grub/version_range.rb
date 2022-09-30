@@ -23,6 +23,10 @@ module PubGrub
         other.empty?
       end
 
+      def hash
+        [].hash
+      end
+
       def intersects?(_)
         false
       end
