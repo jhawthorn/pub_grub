@@ -110,7 +110,7 @@ module PubGrub
     def next_package_to_try
       solution.unsatisfied.min_by do |term|
         package = term.package
-        versions = source.versions_for(package, term.constraint.range)
+        versions = source.versions_for(package, term.constraint.range.upper_invert)
 
         [@package_depth[package], versions.count]
       end.package
