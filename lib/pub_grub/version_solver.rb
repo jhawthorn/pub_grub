@@ -23,8 +23,6 @@ module PubGrub
 
       @solution = PartialSolution.new
 
-      @package_depth = { root => 0 }
-
       add_incompatibility Incompatibility.new([
         Term.new(VersionConstraint.any(root), false)
       ], cause: :root)
@@ -110,9 +108,11 @@ module PubGrub
     def next_package_to_try
       solution.unsatisfied.min_by do |term|
         package = term.package
-        versions = source.versions_for(package, term.constraint.range.upper_invert)
+        range = term.constraint.range
+        matching_versions = source.versions_for(package, range)
+        higher_versions = source.versions_for(package, range.upper_invert)
 
-        [@package_depth[package], versions.count]
+        [matching_versions.count <= 1 ? 0 : 1, higher_versions.count]
       end.package
     end
 
@@ -145,12 +145,6 @@ module PubGrub
 
         conflict ||= incompatibility.terms.all? do |term|
           term.package == package || solution.satisfies?(term)
-        end
-
-        # Update depths of new packages
-        depth = @package_depth[package] + 1
-        incompatibility.terms.each do |term|
-          @package_depth[term.package] ||= depth
         end
       end
 
