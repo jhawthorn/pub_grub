@@ -19,5 +19,6 @@ module PubGrubAssertions
 end
 
 Minitest::Test.include(PubGrubAssertions)
+Minitest::Test.make_my_diffs_pretty!
 
 require "minitest/autorun"
