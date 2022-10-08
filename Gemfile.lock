@@ -6,18 +6,18 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    minitest (5.11.3)
+    minitest (5.16.3)
     minitest-stackprof (0.2.0)
       minitest (>= 5.0)
       stackprof (>= 0.2.7)
-    rake (13.0.1)
-    stackprof (0.2.12)
+    rake (13.0.6)
+    stackprof (0.2.21)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.16)
+  bundler (~> 2.0)
   minitest (~> 5.0)
   minitest-stackprof
   pub_grub!
@@ -25,4 +25,4 @@ DEPENDENCIES
   stackprof (~> 0.2.12)
 
 BUNDLED WITH
-   1.17.3
+   2.3.23
