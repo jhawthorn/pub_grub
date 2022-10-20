@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jhawthorn/pub_grub.svg?branch=main)](https://travis-ci.org/jhawthorn/pub_grub)
+[![Build Status](https://github.com/jhawthorn/pub_grub/workflows/Test/badge.svg?branch=main)](https://github.com/jhawthorn/pub_grub/actions/workflows/test.yml)
 
 # PubGrub
 
