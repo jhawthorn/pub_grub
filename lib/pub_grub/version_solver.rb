@@ -44,7 +44,7 @@ module PubGrub
       if solved?
         logger.info { "Solution found after #{solution.attempted_solutions} attempts:" }
         solution.decisions.each do |package, version|
-          next if package == Package.root
+          next if Package.root?(package)
           logger.info { "* #{package} #{version}" }
         end
 

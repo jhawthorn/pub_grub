@@ -17,6 +17,18 @@ module PubGrub
 
       assert_kind_of Package, package
       assert_equal "pkg", package.name
+      refute Package.root?(package)
+    end
+
+    def test_custom_package
+      package_class = Struct.new(:name, :root) do
+        def root?
+          root == true
+        end
+      end
+
+      refute Package.root?(package_class.new("pkg", false))
+      assert Package.root?(package_class.new("pkg", true))
     end
   end
 end

@@ -91,7 +91,7 @@ module PubGrub
     end
 
     def to_s(allow_every: false)
-      if package == Package.root
+      if Package.root?(package)
         "root"
       elsif allow_every && any?
         "every version of #{package}"

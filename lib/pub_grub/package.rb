@@ -28,6 +28,14 @@ module PubGrub
       ROOT_VERSION
     end
 
+    def self.root?(package)
+      if package.respond_to?(:root?)
+        package.root?
+      else
+        package == root
+      end
+    end
+
     def to_s
       name.to_s
     end
