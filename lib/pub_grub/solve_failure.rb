@@ -2,6 +2,8 @@ require_relative 'failure_writer'
 
 module PubGrub
   class SolveFailure < StandardError
+    attr_reader :incompatibility
+
     def initialize(incompatibility)
       @incompatibility = incompatibility
     end
