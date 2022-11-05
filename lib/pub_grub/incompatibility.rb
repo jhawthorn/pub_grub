@@ -13,9 +13,10 @@ module PubGrub
 
     attr_reader :terms, :cause
 
-    def initialize(terms, cause:)
+    def initialize(terms, cause:, custom_explanation: nil)
       @cause = cause
       @terms = cleanup_terms(terms)
+      @custom_explanation = custom_explanation
 
       if cause == :dependency && @terms.length != 2
         raise ArgumentError, "a dependency Incompatibility must have exactly two terms. Got #{@terms.inspect}"
@@ -53,6 +54,8 @@ module PubGrub
     end
 
     def to_s
+      return @custom_explanation if @custom_explanation
+
       case cause
       when :root
         "(root dependency)"

@@ -128,6 +128,12 @@ module PubGrub
       end
     end
 
+    def no_versions_incompatibility_for(_package, unsatisfied_term)
+      cause = Incompatibility::NoVersions.new(unsatisfied_term)
+
+      Incompatibility.new([unsatisfied_term], cause: cause)
+    end
+
     def incompatibilities_for(package, version)
       package_deps = @cached_dependencies[package]
       sorted_versions = @sorted_versions[package]

@@ -127,8 +127,7 @@ module PubGrub
       version = source.versions_for(package, unsatisfied_term.constraint.range).first
 
       if version.nil?
-        cause = Incompatibility::NoVersions.new(unsatisfied_term)
-        add_incompatibility Incompatibility.new([unsatisfied_term], cause: cause)
+        add_incompatibility source.no_versions_incompatibility_for(package, unsatisfied_term)
         return package
       end
 
