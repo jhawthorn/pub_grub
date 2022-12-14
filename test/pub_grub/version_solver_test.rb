@@ -393,5 +393,24 @@ Because rails < 7.0.4 depends on railties = 7.0.3.1
 Thus, version solving has failed.
 ERR
     end
+
+    def test_circular_dependency
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'circular-dependency' => '>= 0' }
+
+        s.add 'circular-dependency', '0.0.1', deps: { 'circular-dependency' => '>= 0' }
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      ex = assert_raises PubGrub::SolveFailure do
+        solver.solve
+      end
+      assert_equal <<ERR.strip,  ex.explanation.strip
+Because every version of circular-dependency depends on itself
+  and root depends on circular-dependency >= 0,
+  version solving has failed.
+ERR
+    end
   end
 end
