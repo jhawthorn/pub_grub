@@ -359,5 +359,39 @@ ERR
         'bar' => '1.0.0'
       }
     end
+
+    def test_conflicts_with_empty_ranges_and_version_unions
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'rails' => '>= 7.0.3.1', 'activeadmin' => '2.13.1' }
+
+        s.add 'activeadmin', '2.13.1', deps: { 'railties' => ['>= 6.1', '< 7.1'] }
+        s.add "actionpack", "6.1.4"
+        s.add "activesupport", "6.1.4"
+        s.add "actionpack", "7.0.3.1"
+        s.add "activesupport", "7.0.3.1"
+        s.add "actionpack", "7.0.4"
+        s.add "activesupport", "7.0.4"
+        s.add "railties", "6.1.4" , deps: { "activesupport" => "6.1.4", "actionpack" => "6.1.4" }
+        s.add "rails", "7.0.3.1", deps: { "activesupport" => "7.0.3.1", "railties" => "7.0.3.1" }
+        s.add "rails", "7.0.4", deps: { "activesupport" => "7.0.4", "railties" => "7.0.4" }
+      end
+
+      solver = VersionSolver.new(source: source)
+
+      ex = assert_raises PubGrub::SolveFailure do
+        solver.solve
+      end
+      assert_equal <<ERR.strip,  ex.explanation.strip
+Because rails < 7.0.4 depends on activesupport = 7.0.3.1
+  and rails >= 7.0.4 depends on activesupport = 7.0.4,
+  activesupport = 7.0.3.1 OR = 7.0.4 is required.
+And because every version of railties depends on activesupport = 6.1.4,
+  every version of railties is forbidden.
+Because rails < 7.0.4 depends on railties = 7.0.3.1
+  and rails >= 7.0.4 depends on railties = 7.0.4,
+  railties = 7.0.3.1 OR = 7.0.4 is required.
+Thus, version solving has failed.
+ERR
+    end
   end
 end

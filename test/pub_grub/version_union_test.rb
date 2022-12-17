@@ -212,6 +212,20 @@ module PubGrub
       assert_equal expected, b.intersect(a)
     end
 
+    def test_intersect_empty
+      a = union([
+        VersionRange.new(min: 2, max: 3),
+        VersionRange.new(min: 4, max: 5),
+        VersionRange.new(min: 6, max: 8)
+      ])
+
+      b = VersionRange.empty
+
+      refute a.intersects?(b)
+
+      assert_equal VersionRange.empty, a.intersect(b)
+    end
+
     def test_allows_all?
       a = union([
         VersionRange.new(min: 2, max: 3),
