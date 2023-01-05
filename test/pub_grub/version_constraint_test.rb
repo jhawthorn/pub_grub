@@ -10,6 +10,13 @@ module PubGrub
       PubGrub::RubyGems.parse_constraint(package, constraint)
     end
 
+    def test_equality
+      a = parse(@package, "~> 1.0")
+      b = parse(@package, "~> 1.0")
+
+      assert_equal a, b
+    end
+
     def test_empty_restriction
       constraint = VersionConstraint.any(@package)
 
