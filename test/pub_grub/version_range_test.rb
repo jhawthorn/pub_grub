@@ -349,6 +349,28 @@ module PubGrub
       assert_equal b, b
     end
 
+    def test_to_s_with_custom_versions
+      version = Class.new do
+        attr_reader :version, :platform
+
+        def initialize(version, platform = "ruby")
+          @version = version
+          @platform = platform
+        end
+
+        def ==(other)
+          @version == other.version && @platform == other.platform
+        end
+
+        def to_s
+          version.to_s
+        end
+      end
+
+      a = VersionRange.new(min: version.new(2), max: version.new(2, "linux"))
+      assert_equal "= 2", a.to_s
+    end
+
     def test_contiguous_intersect
       a = VersionRange.new(min: nil, max: 2)
       b = VersionRange.new(min: 2, max: nil)
