@@ -135,6 +135,41 @@ module PubGrub
       assert_equal "> 1, < 8, != 3, != 5", complex.to_s
     end
 
+    def test_not_equal_with_custom_version
+      version = Class.new do
+        include Comparable
+
+        attr_reader :version, :platform
+
+        def initialize(version, platform = "ruby")
+          @version = version
+          @platform = platform
+        end
+
+        def ==(other)
+          @version == other.version && @platform == other.platform
+        end
+
+        def <=>(other)
+          sort_obj <=> other.sort_obj
+        end
+
+        def sort_obj
+          [@version, @platform == "ruby" ? -1 : 1]
+        end
+
+        def to_s
+          version.to_s
+        end
+      end
+
+      a = union([
+        VersionRange.new(max: version.new(2)),
+        VersionRange.new(min: version.new(2, "linux"))
+      ])
+      assert_equal "!= 2", a.to_s
+    end
+
     def test_single_overlap
       a = union([
         VersionRange.new(min: 0, max: 1),
