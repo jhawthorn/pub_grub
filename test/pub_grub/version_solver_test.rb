@@ -310,14 +310,14 @@ ERR
       and foo < 1.1.0 depends on b ~> 1.0,
       every version of a is incompatible with foo < 1.1.0.
 (1) So, because foo < 1.1.0 depends on a ~> 1.0,
-      foo < 1.1.0 is forbidden.
+      foo < 1.1.0 cannot be used.
 
     Because every version of x depends on y ~> 2.0
       and foo >= 1.1.0 depends on y ~> 1.0,
       every version of x is incompatible with foo >= 1.1.0.
     And because foo >= 1.1.0 depends on x ~> 1.0,
-      foo >= 1.1.0 is forbidden.
-    So, because foo < 1.1.0 is forbidden (1),
+      foo >= 1.1.0 cannot be used.
+    So, because foo < 1.1.0 cannot be used (1),
       version solving has failed.
 ERR
     end
@@ -386,7 +386,7 @@ Because rails < 7.0.4 depends on activesupport = 7.0.3.1
   and rails >= 7.0.4 depends on activesupport = 7.0.4,
   activesupport = 7.0.3.1 OR = 7.0.4 is required.
 And because every version of railties depends on activesupport = 6.1.4,
-  every version of railties is forbidden.
+  railties cannot be used.
 Because rails < 7.0.4 depends on railties = 7.0.3.1
   and rails >= 7.0.4 depends on railties = 7.0.4,
   railties = 7.0.3.1 OR = 7.0.4 is required.
