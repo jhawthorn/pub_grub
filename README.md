@@ -4,9 +4,7 @@
 
 A ruby implementation of [Natalie Weizenbaum's PubGrub](https://medium.com/@nex3/pubgrub-2fb6470504f), a next-generation version solving algorithm.
 
-It's the resolver used by [Bundler](https://bundler.io) as of [version 2.4](https://bundler.io/blog/2023/01/31/bundler-v2-4.html).
-
-It's also used in the [gel](https://github.com/gel-rb/gel) package manager.
+It's the resolver used by [Bundler](https://bundler.io) (as of [version 2.4](https://bundler.io/blog/2023/01/31/bundler-v2-4.html)) and [gel](https://github.com/gel-rb/gel).
 
 ## Usage
 
