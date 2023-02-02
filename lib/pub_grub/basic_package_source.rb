@@ -172,11 +172,6 @@ module PubGrub
           # no such package -> this version is invalid
         end
 
-        if package == dep_package
-          cause = PubGrub::Incompatibility::CircularDependency.new(dep_package, dep_constraint_name)
-          return [Incompatibility.new([Term.new(self_constraint, true)], cause: cause)]
-        end
-
         dep_constraint = parse_dependency(dep_package, dep_constraint_name)
         if !dep_constraint
           # falsey indicates this dependency was invalid
