@@ -402,15 +402,11 @@ ERR
       end
 
       solver = VersionSolver.new(source: source)
+      result = solver.solve
 
-      ex = assert_raises PubGrub::SolveFailure do
-        solver.solve
-      end
-      assert_equal <<ERR.strip,  ex.explanation.strip
-Because every version of circular-dependency depends on itself
-  and root depends on circular-dependency >= 0,
-  version solving has failed.
-ERR
+      assert_solution source, result, {
+        'circular-dependency' => '0.0.1'
+      }
     end
   end
 end
