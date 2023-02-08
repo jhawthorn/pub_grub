@@ -188,9 +188,9 @@ module PubGrub
       refute_includes empty, 9999
       refute_includes empty, -9999
 
-      refute empty.intersects?(empty)
-      refute a.intersects?(empty)
-      refute empty.intersects?(a)
+      refute_operator empty, :intersects?, empty
+      refute_operator a, :intersects?, empty
+      refute_operator empty, :intersects?, a
 
       assert_equal empty, empty.intersect(empty)
       assert_equal empty, a.intersect(empty)
@@ -200,6 +200,10 @@ module PubGrub
       assert_equal empty, VersionRange.any.invert
 
       assert empty.hash
+
+      assert_operator empty, :eql?, empty
+      refute_operator a, :eql?, empty
+      refute_operator empty, :eql?, a
     end
 
     def test_contiguous_to
