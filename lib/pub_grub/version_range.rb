@@ -65,6 +65,7 @@ module PubGrub
     end
 
     EMPTY = Empty.new
+    Empty.singleton_class.undef_method(:new)
 
     def self.empty
       EMPTY

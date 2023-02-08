@@ -180,7 +180,7 @@ module PubGrub
       empty = VersionRange.empty
       a = VersionRange.new(min: 1, max: 4)
 
-      assert_equal VersionRange.empty, empty
+      assert_same VersionRange.empty, empty
 
       refute_includes empty, 0
       refute_includes empty, 1
