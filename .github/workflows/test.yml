@@ -8,14 +8,17 @@ on:
   pull_request:
 
 jobs:
+  ruby-versions:
+    uses: ruby/actions/.github/workflows/ruby_versions.yml@master
+    with:
+      engine: cruby
+      min_version: 2.7
   build:
+    name: Ruby ${{ matrix.ruby }}
+    needs: ruby-versions
     strategy:
       matrix:
-        ruby:
-          - '2.6.0'
-          - '2.7.0'
-          - '3.0.0'
-          - '3.1.0'
+        ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
       fail-fast: false
 
     runs-on: ubuntu-latest
