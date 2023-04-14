@@ -204,7 +204,7 @@ module PubGrub
           solution.backtrack(previous_level)
 
           if new_incompatibility
-            add_incompatibility(incompatibility)
+            add_incompatibility(new_incompatibility)
           end
 
           return incompatibility
@@ -219,9 +219,14 @@ module PubGrub
           new_terms << difference.invert
         end
 
-        incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, most_recent_satisfier.cause))
+        new_incompatibility = Incompatibility.new(new_terms, cause: Incompatibility::ConflictCause.new(incompatibility, most_recent_satisfier.cause))
 
-        new_incompatibility = true
+        if incompatibility.eql?(new_incompatibility)
+          logger.info { "!! failed to resolve conflicts, this shouldn't have happened" }
+          break
+        end
+
+        incompatibility = new_incompatibility
 
         partially = difference ? " partially" : ""
         logger.info { "! #{most_recent_term} is#{partially} satisfied by #{most_recent_satisfier.term}" }
