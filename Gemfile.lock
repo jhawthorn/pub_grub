@@ -11,7 +11,7 @@ GEM
     minitest-stackprof (0.2.0)
       minitest (>= 5.0)
       stackprof (>= 0.2.7)
-    rake (13.0.6)
+    rake (13.2.1)
     stackprof (0.2.21)
 
 PLATFORMS
@@ -31,7 +31,7 @@ CHECKSUMS
   minitest (5.25.4) sha256=9cf2cae25ac4dfc90c988ebc3b917f53c054978b673273da1bd20bcb0778f947
   minitest-stackprof (0.2.0) sha256=0b713cdb354ad0221cc61e6044595e1ffdea854505a5e0bd2284fe1d154838a8
   pub_grub (0.5.0)
-  rake (13.0.6) sha256=5ce4bf5037b4196c24ac62834d8db1ce175470391026bd9e557d669beeb19097
+  rake (13.2.1) sha256=46cb38dae65d7d74b6020a4ac9d48afed8eb8149c040eccf0523bec91907059d
   stackprof (0.2.21) sha256=2b6406c55dc2e134b2789c4cc631d96e67da87821a166f4ae12f15bec5cff5ae
 
 BUNDLED WITH
