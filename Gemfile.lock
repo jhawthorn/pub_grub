@@ -6,7 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    minitest (5.16.3)
+    minitest (5.25.4)
     minitest-stackprof (0.2.0)
       minitest (>= 5.0)
       stackprof (>= 0.2.7)
@@ -25,7 +25,7 @@ DEPENDENCIES
   stackprof (~> 0.2.12)
 
 CHECKSUMS
-  minitest (5.16.3) sha256=60f81ad96ca5518e1457bd29eb826db60f86fbbdf8c05eac63b4824ef1f52614
+  minitest (5.25.4) sha256=9cf2cae25ac4dfc90c988ebc3b917f53c054978b673273da1bd20bcb0778f947
   minitest-stackprof (0.2.0) sha256=0b713cdb354ad0221cc61e6044595e1ffdea854505a5e0bd2284fe1d154838a8
   pub_grub (0.5.0)
   rake (13.0.6) sha256=5ce4bf5037b4196c24ac62834d8db1ce175470391026bd9e557d669beeb19097
