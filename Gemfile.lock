@@ -6,6 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    logger (1.6.6)
     minitest (5.25.4)
     minitest-stackprof (0.2.0)
       minitest (>= 5.0)
@@ -18,6 +19,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
+  logger (~> 1.6)
   minitest (~> 5.0)
   minitest-stackprof
   pub_grub!
@@ -25,6 +27,7 @@ DEPENDENCIES
   stackprof (~> 0.2.12)
 
 CHECKSUMS
+  logger (1.6.6) sha256=dd618d24e637715472732e7eed02e33cfbdf56deaad225edd0f1f89d38024017
   minitest (5.25.4) sha256=9cf2cae25ac4dfc90c988ebc3b917f53c054978b673273da1bd20bcb0778f947
   minitest-stackprof (0.2.0) sha256=0b713cdb354ad0221cc61e6044595e1ffdea854505a5e0bd2284fe1d154838a8
   pub_grub (0.5.0)
