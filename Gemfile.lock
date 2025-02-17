@@ -24,5 +24,12 @@ DEPENDENCIES
   rake (~> 13.0)
   stackprof (~> 0.2.12)
 
+CHECKSUMS
+  minitest (5.16.3) sha256=60f81ad96ca5518e1457bd29eb826db60f86fbbdf8c05eac63b4824ef1f52614
+  minitest-stackprof (0.2.0) sha256=0b713cdb354ad0221cc61e6044595e1ffdea854505a5e0bd2284fe1d154838a8
+  pub_grub (0.5.0)
+  rake (13.0.6) sha256=5ce4bf5037b4196c24ac62834d8db1ce175470391026bd9e557d669beeb19097
+  stackprof (0.2.21) sha256=2b6406c55dc2e134b2789c4cc631d96e67da87821a166f4ae12f15bec5cff5ae
+
 BUNDLED WITH
    2.6.4
