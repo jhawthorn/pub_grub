@@ -270,14 +270,14 @@ module PubGrub
       ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
-      assert_equal <<ERR.strip, ex.explanation.strip
-Because every version of foo depends on bar ~> 2.0
-  and every version of bar depends on baz ~> 3.0,
-  every version of foo requires baz ~> 3.0.
-So, because root depends on foo ~> 1.0
-  and root depends on baz ~> 1.0,
-  version solving has failed.
-ERR
+      assert_equal <<~ERR.strip, ex.explanation.strip
+        Because every version of foo depends on bar ~> 2.0
+          and every version of bar depends on baz ~> 3.0,
+          every version of foo requires baz ~> 3.0.
+        So, because root depends on foo ~> 1.0
+          and root depends on baz ~> 1.0,
+          version solving has failed.
+      ERR
     end
 
     ## Sixth example from pub's solver.md documentation
@@ -305,21 +305,21 @@ ERR
       ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
-      assert_equal <<ERR.strip,  ex.explanation.strip
-    Because every version of a depends on b ~> 2.0
-      and foo < 1.1.0 depends on b ~> 1.0,
-      every version of a is incompatible with foo < 1.1.0.
-(1) So, because foo < 1.1.0 depends on a ~> 1.0,
-      foo < 1.1.0 cannot be used.
+      assert_equal <<~ERR.strip,  ex.explanation.strip
+            Because every version of a depends on b ~> 2.0
+              and foo < 1.1.0 depends on b ~> 1.0,
+              every version of a is incompatible with foo < 1.1.0.
+        (1) So, because foo < 1.1.0 depends on a ~> 1.0,
+              foo < 1.1.0 cannot be used.
 
-    Because every version of x depends on y ~> 2.0
-      and foo >= 1.1.0 depends on y ~> 1.0,
-      every version of x is incompatible with foo >= 1.1.0.
-    And because foo >= 1.1.0 depends on x ~> 1.0,
-      foo >= 1.1.0 cannot be used.
-    So, because foo < 1.1.0 cannot be used (1),
-      version solving has failed.
-ERR
+            Because every version of x depends on y ~> 2.0
+              and foo >= 1.1.0 depends on y ~> 1.0,
+              every version of x is incompatible with foo >= 1.1.0.
+            And because foo >= 1.1.0 depends on x ~> 1.0,
+              foo >= 1.1.0 cannot be used.
+            So, because foo < 1.1.0 cannot be used (1),
+              version solving has failed.
+      ERR
     end
 
     def test_invalid_package_failure
@@ -334,11 +334,11 @@ ERR
       ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
-      assert_equal <<ERR.strip,  ex.explanation.strip
-Because every version of foo depends on unknown package bar
-  and root depends on foo ~> 1.0,
-  version solving has failed.
-ERR
+      assert_equal <<~ERR.strip,  ex.explanation.strip
+        Because every version of foo depends on unknown package bar
+          and root depends on foo ~> 1.0,
+          version solving has failed.
+      ERR
     end
 
     def test_invalid_package_success
@@ -381,17 +381,17 @@ ERR
       ex = assert_raises PubGrub::SolveFailure do
         solver.solve
       end
-      assert_equal <<ERR.strip,  ex.explanation.strip
-Because rails < 7.0.4 depends on activesupport = 7.0.3.1
-  and rails >= 7.0.4 depends on activesupport = 7.0.4,
-  activesupport = 7.0.3.1 OR = 7.0.4 is required.
-And because every version of railties depends on activesupport = 6.1.4,
-  railties cannot be used.
-Because rails < 7.0.4 depends on railties = 7.0.3.1
-  and rails >= 7.0.4 depends on railties = 7.0.4,
-  railties = 7.0.3.1 OR = 7.0.4 is required.
-Thus, version solving has failed.
-ERR
+      assert_equal <<~ERR.strip,  ex.explanation.strip
+        Because rails < 7.0.4 depends on activesupport = 7.0.3.1
+          and rails >= 7.0.4 depends on activesupport = 7.0.4,
+          activesupport = 7.0.3.1 OR = 7.0.4 is required.
+        And because every version of railties depends on activesupport = 6.1.4,
+          railties cannot be used.
+        Because rails < 7.0.4 depends on railties = 7.0.3.1
+          and rails >= 7.0.4 depends on railties = 7.0.4,
+          railties = 7.0.3.1 OR = 7.0.4 is required.
+        Thus, version solving has failed.
+      ERR
     end
 
     def test_circular_dependency
