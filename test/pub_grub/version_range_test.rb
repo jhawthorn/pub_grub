@@ -222,6 +222,7 @@ module PubGrub
         VersionRange.new(min: 3, max: 6, include_max: true))
 
       refute VersionRange.new.contiguous_to?(VersionRange.empty)
+      assert VersionRange.new.contiguous_to?(VersionRange.new)
       refute VersionRange.empty.contiguous_to?(VersionRange.empty)
     end
 
