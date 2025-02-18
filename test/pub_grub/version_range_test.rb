@@ -31,6 +31,9 @@ module PubGrub
       assert_includes range, 6
     end
 
+    def only_lower_ill_defined
+      assert_raise(ArgumentError) { VersionRange.new(min: 5, include_max: true) }
+    end
 
     # Only upper
 
@@ -54,6 +57,9 @@ module PubGrub
       refute_includes range, 8
     end
 
+    def only_upper_ill_defined
+      assert_raise(ArgumentError) { VersionRange.new(max: 7, include_min: true) }
+    end
 
     # Both
 
