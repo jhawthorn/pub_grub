@@ -408,5 +408,32 @@ module PubGrub
         'circular-dependency' => '0.0.1'
       }
     end
+
+    def test_requirements_with_disjoint_unbounded_ranges
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'inspec' => '5.22.3', "ruby" => "3.2.2" }
+
+        s.add 'inspec', '5.22.3', deps: { 'ruby' => ">= 3.2.2", 'train-kubernetes' => ">= 0.1.7" }
+        s.add 'ruby', '3.2.2'
+
+        s.add 'train-kubernetes', '0.1.12', deps: { 'k8s-ruby' => '>= 0.14.0' }
+        s.add 'train-kubernetes', '0.1.10', deps: { 'k8s-ruby' => '= 0.10.5' }
+        s.add 'train-kubernetes', '0.1.7', deps: { 'k8s-ruby' => '>= 0.10.5' }
+
+        s.add 'k8s-ruby', '0.10.5', deps: { 'ruby' => '< 3.2.2' }
+        s.add 'k8s-ruby', '0.11.0', deps: { 'ruby' => '>= 3.2.2' }
+        s.add 'k8s-ruby', '0.14.0', deps: { 'ruby' => '< 3.2.2' }
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'inspec' => '5.22.3',
+        'ruby' => '3.2.2',
+        'train-kubernetes' => '0.1.7',
+        'k8s-ruby' => '0.11.0'
+      }
+    end
   end
 end
