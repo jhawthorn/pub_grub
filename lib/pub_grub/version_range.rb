@@ -76,6 +76,9 @@ module PubGrub
     end
 
     def initialize(min: nil, max: nil, include_min: false, include_max: false, name: nil)
+      raise ArgumentError, "Ranges without a lower bound cannot have include_min == true" if !min && include_min == true
+      raise ArgumentError, "Ranges without an upper bound cannot have include_max == true" if !max && include_max == true
+
       @min = min
       @max = max
       @include_min = include_min
@@ -375,15 +378,15 @@ module PubGrub
     def invert
       return self.class.empty if any?
 
-      low = VersionRange.new(max: min, include_max: !include_min)
-      high = VersionRange.new(min: max, include_min: !include_max)
+      low = -> { VersionRange.new(max: min, include_max: !include_min) }
+      high = -> { VersionRange.new(min: max, include_min: !include_max) }
 
       if !min
-        high
+        high.call
       elsif !max
-        low
+        low.call
       else
-        low.union(high)
+        low.call.union(high.call)
       end
     end
 
