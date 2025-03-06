@@ -314,10 +314,19 @@ module PubGrub
 
     def contiguous_to?(other)
       return false if other.empty?
+      return true if any?
 
-      intersects?(other) ||
-        (min == other.max && (include_min || other.include_max)) ||
-        (max == other.min && (include_max || other.include_min))
+      intersects?(other) || contiguous_below?(other) || contiguous_above?(other)
+    end
+
+    def contiguous_below?(other)
+      return false if !max || !other.min
+
+      max == other.min && (include_max || other.include_min)
+    end
+
+    def contiguous_above?(other)
+      other.contiguous_below?(self)
     end
 
     def allows_all?(other)
