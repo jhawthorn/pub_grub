@@ -116,8 +116,12 @@ module PubGrub
       end
     end
 
+    def sorted_versions_for(package, range=VersionRange.any)
+      range.select_versions(@sorted_versions[package])
+    end
+
     def versions_for(package, range=VersionRange.any)
-      versions = range.select_versions(@sorted_versions[package])
+      versions = sorted_versions_for(package, range)
 
       # Conditional avoids (among other things) calling
       # sort_versions_by_preferred with the root package
