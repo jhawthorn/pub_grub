@@ -109,8 +109,8 @@ module PubGrub
       solution.unsatisfied.min_by do |term|
         package = term.package
         range = term.constraint.range
-        matching_versions = source.versions_for(package, range)
-        higher_versions = source.versions_for(package, range.upper_invert)
+        matching_versions = source.sorted_versions_for(package, range)
+        higher_versions = source.sorted_versions_for(package, range.upper_invert)
 
         [matching_versions.count <= 1 ? 0 : 1, higher_versions.count]
       end.package
