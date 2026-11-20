@@ -12,13 +12,12 @@ GEM
       minitest (>= 5.0)
       stackprof (>= 0.2.7)
     rake (13.2.1)
-    stackprof (0.2.21)
+    stackprof (0.2.28)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 2.0)
   logger (~> 1.6)
   minitest (~> 5.0)
   minitest-stackprof
@@ -27,12 +26,13 @@ DEPENDENCIES
   stackprof (~> 0.2.12)
 
 CHECKSUMS
+  bundler (4.1.0) sha256=d7b7a797b988e544a0677a9c6ed78146f2f63d05ae1af8bc7d9426cf88b46377
   logger (1.6.6) sha256=dd618d24e637715472732e7eed02e33cfbdf56deaad225edd0f1f89d38024017
   minitest (5.25.4) sha256=9cf2cae25ac4dfc90c988ebc3b917f53c054978b673273da1bd20bcb0778f947
   minitest-stackprof (0.2.0) sha256=0b713cdb354ad0221cc61e6044595e1ffdea854505a5e0bd2284fe1d154838a8
   pub_grub (0.5.0)
   rake (13.2.1) sha256=46cb38dae65d7d74b6020a4ac9d48afed8eb8149c040eccf0523bec91907059d
-  stackprof (0.2.21) sha256=2b6406c55dc2e134b2789c4cc631d96e67da87821a166f4ae12f15bec5cff5ae
+  stackprof (0.2.28) sha256=4ec2ace02f386012b40ca20ef80c030ad711831f59511da12e83b34efb0f9a04
 
 BUNDLED WITH
-   2.6.4
+  4.1.0
