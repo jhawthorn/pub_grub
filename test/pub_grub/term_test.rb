@@ -39,6 +39,13 @@ module PubGrub
       refute term.empty?
     end
 
+    def test_negative_any_term_is_not_empty
+      term = Term.new(VersionConstraint.any(@package), false)
+
+      assert_equal "not pkg >= 0", term.to_s
+      refute term.empty?
+    end
+
     def assert_term_relation(relation, a, b)
       a = build_term(a) unless a.is_a?(Term)
       b = build_term(b) unless b.is_a?(Term)
