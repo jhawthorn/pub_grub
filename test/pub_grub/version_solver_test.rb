@@ -317,7 +317,9 @@ module PubGrub
               every version of x is incompatible with foo >= 1.1.0.
             And because foo >= 1.1.0 depends on x ~> 1.0,
               foo >= 1.1.0 cannot be used.
-            So, because foo < 1.1.0 cannot be used (1),
+            And because foo < 1.1.0 cannot be used (1),
+              foo cannot be used.
+            So, because root depends on foo ~> 1.0,
               version solving has failed.
       ERR
     end
@@ -384,13 +386,15 @@ module PubGrub
       assert_equal <<~ERR.strip,  ex.explanation.strip
         Because rails < 7.0.4 depends on activesupport = 7.0.3.1
           and rails >= 7.0.4 depends on activesupport = 7.0.4,
-          activesupport = 7.0.3.1 OR = 7.0.4 is required.
+          every version of rails requires activesupport = 7.0.3.1 OR = 7.0.4.
         And because every version of railties depends on activesupport = 6.1.4,
-          railties cannot be used.
+          every version of rails is incompatible with railties >= 0.
         Because rails < 7.0.4 depends on railties = 7.0.3.1
           and rails >= 7.0.4 depends on railties = 7.0.4,
-          railties = 7.0.3.1 OR = 7.0.4 is required.
-        Thus, version solving has failed.
+          every version of rails requires railties = 7.0.3.1 OR = 7.0.4.
+        Thus, rails cannot be used.
+        So, because root depends on rails >= 7.0.3.1,
+          version solving has failed.
       ERR
     end
 
@@ -433,6 +437,29 @@ module PubGrub
         'ruby' => '3.2.2',
         'train-kubernetes' => '0.1.7',
         'k8s-ruby' => '0.11.0'
+      }
+    end
+
+    # No version of ff can be used, so aa 2.0.0 can't either. The solver
+    # should fall back to aa 1.0.0, which has no dependencies.
+    def test_backtracks_when_no_version_of_a_dependency_can_be_used
+      source = StaticPackageSource.new do |s|
+        s.root deps: { 'aa' => '>= 0' }
+
+        s.add 'aa', '2.0.0', deps: { 'ff' => '>= 0', 'll' => '>= 0' }
+        s.add 'aa', '1.0.0'
+
+        s.add 'ff', '2.0.0', deps: { 'll' => '= 3' }
+        s.add 'ff', '1.0.0', deps: { 'll' => '< 1' }
+
+        s.add 'll', '2.0.0'
+      end
+
+      solver = VersionSolver.new(source: source)
+      result = solver.solve
+
+      assert_solution source, result, {
+        'aa' => '1.0.0'
       }
     end
   end
