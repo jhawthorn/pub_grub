@@ -27,7 +27,11 @@ module PubGrub
       versions = @source.versions_for(package, range)
 
       indexes = @version_indexes[package]
-      versions.min_by { |version| indexes[version] }
+      versions.min_by do |version|
+        indexes.fetch(version) do
+          raise "#{package} #{version} is returned by versions_for but missing from all_versions_for"
+        end
+      end
     end
 
     def next_term_to_try_from(unsatisfied)
