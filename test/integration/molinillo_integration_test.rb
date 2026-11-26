@@ -42,14 +42,14 @@ class MolinilloIntegrationTest < Minitest::Test
   end
 
   molinillo_cases.each do |case_file|
-    case_data = JSON.parse(File.read(case_file))
+    case_data = JSON.parse(File.read(case_file), allow_comments: true)
 
     define_method "test_#{case_data["name"]}" do
       return if case_data["name"].include?("circular")
 
       index_name = case_data["index"] || "awesome"
 
-      index_data = JSON.parse(File.read(File.join(INDEX_DIR, "#{index_name}.json")))
+      index_data = JSON.parse(File.read(File.join(INDEX_DIR, "#{index_name}.json")), allow_comments: true)
 
       source = PubGrub::StaticPackageSource.new do |s|
         index_data.each do |package_name, packages|
